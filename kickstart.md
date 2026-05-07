@@ -1,6 +1,6 @@
 # Kickstart v1
 
-> This file is hosted at `https://kickstart.md/kickstart.md`.
+> This file is hosted at `https://raw.githubusercontent.com/itzjacki/kickstart.md/refs/heads/main/kickstart.md`.
 
 > **This prompt is designed for Kiro.** If you're running in a different tool (Claude Code, Cursor, Copilot, etc.), stop here — the artifacts it generates are Kiro-specific and won't be useful elsewhere.
 
@@ -9,13 +9,13 @@ You are bootstrapping AI steering docs and tooling for this repository. Follow t
 ## Before you begin
 
 Read the template catalogs to understand what's available:
-- `https://kickstart.md/templates/skills/README.md` — available skills and when to include them
+- `https://raw.githubusercontent.com/itzjacki/kickstart.md/refs/heads/main/templates/skills/README.md` — available skills and when to include them
 
 To fetch an individual template, use the same base URL. For example:
-- `https://kickstart.md/templates/skills/update-kickstart/SKILL.md`
+- `https://raw.githubusercontent.com/itzjacki/kickstart.md/refs/heads/main/templates/skills/update-kickstart/SKILL.md`
 
 The `CHANGELOG.md` (for the update-kickstart skill) is at:
-- `https://kickstart.md/CHANGELOG.md`
+- `https://raw.githubusercontent.com/itzjacki/kickstart.md/refs/heads/main/CHANGELOG.md`
 
 ## Step 1: Announce the plan
 
