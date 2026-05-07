@@ -2,9 +2,10 @@
 
 ## Project overview
 
-kickstart.md is a meta-toolkit. It contains a prompt (`kickstart.md`) that an AI agent reads and executes against a *different* target repository to bootstrap AI steering docs and tooling there.
+kickstart.md is a meta-toolkit. It contains a prompt (`kickstart.md`) that an AI agent reads and executes against a _different_ target repository to bootstrap AI steering docs and tooling there.
 
 This repo does NOT contain application code. It contains:
+
 - `kickstart.md` — the entry-point prompt an AI agent follows to set up a target repo
 - `TODO.md` — project roadmap and checklist
 - Templates and examples (as they are developed)
@@ -34,3 +35,4 @@ This repo does NOT contain application code. It contains:
 - When a decision is made during planning or implementation, update this file immediately. Do not rely on chat history to preserve decisions.
 - Keep `TODO.md` in sync with current progress.
 - This is a documentation/prompt project — there is no build step or test suite.
+- Do not ever touch the project root README.md, index.html or styles.css unless _explicitly_ asked to do so. They are only to be worked on by a human.
