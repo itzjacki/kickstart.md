@@ -1,1 +1,1 @@
-# kiro-kickstart
+# kickstart.md
