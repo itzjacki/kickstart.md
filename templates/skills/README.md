@@ -8,17 +8,17 @@ The kickstart prompt reads this catalog to decide which skills to install based 
 
 ## Always included
 
-| Skill | Description | Customization |
-|-------|-------------|---------------|
-| `update-kickstart` | Update steering docs and skills when a new kickstart version is available. Reads the target repo's current version, diffs against the changelog, and applies relevant changes. | Fill in the path/URL to the kickstart repo. |
+| Skill              | Description                                                                                                                                                                    | Customization                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------- | --- |
+| `update-kickstart` | Update steering docs and skills when a new kickstart version is available. Reads the target repo's current version, diffs against the changelog, and applies relevant changes. | Fill in the path/URL to the kickstart repo. |     |
 
 ## Conditional
 
-| Skill | Include when | Description | Based on | Customization |
-|-------|-------------|-------------|----------|---------------|
-| *(to be added)* | | | | |
+| Skill             | Include when                         | Description                                                                                                            | Based on | Customization                                                     |
+| ----------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------- |
+| `update-steering` | Always (any repo with steering docs) | Update AI steering docs after codebase changes. Checks git history, identifies stale docs, and applies targeted edits. | Original | Adjust which steering file paths to check if non-standard layout. |
 
-<!-- 
+<!--
 Template for adding new entries:
 
 | `skill-name` | [detection criteria] | [what it does] | [source URL or "original"] | [what to customize per-repo] |

@@ -1,41 +1,63 @@
 ---
 name: update-kickstart
-description: Update AI steering docs and skills when a new kickstart version is available. Use when the user wants to update their AI tooling setup, or when checking if steering docs are current.
+description: Update AI steering docs and skills when a new kickstart version is available. Use when the user wants to update their AI tooling setup, check if their steering docs are current, or mentions kickstart updates.
 ---
 
 # Update Kickstart
 
 Update this repository's AI steering docs and tooling to the latest kickstart version.
 
-## How to use
+## Principles
 
-The user invokes this skill when they want to check for or apply updates to their AI steering setup.
+- **Preserve manual edits.** The user may have customized their steering files. Never overwrite without showing what would change and getting confirmation.
+- **Show what changed.** Summarize version differences in plain language before doing anything. The user should understand what they're getting.
+- **Ask before destructive changes.** Adding new files is low-risk. Modifying or removing files the user may have edited requires explicit confirmation.
+- **Always recommend.** When presenting options, provide a clear recommendation with reasoning. Don't leave the user to decide blind.
+- **Be concise.** The already-current case should be one sentence. The update-available case should fit on a single screen. Don't pad.
+- **One version at a time is fine.** Apply all changes between current and latest in one pass, but present them grouped by version so the user understands the progression.
 
-## Procedure
+## How it works
 
-1. **Read current version** — find the `<!-- kickstart vN -->` comment in `AGENTS.md` to determine which version was used.
+1. Find the current version stamp (`<!-- kickstart vN -->` in `AGENTS.md`)
+2. Read `CHANGELOG.md` from the kickstart repo to see what changed since that version
+3. Summarize the changes and ask the user if they want to apply them
+4. Apply changes, preserving manual edits
+5. Update the version stamp
 
-2. **Read the changelog** — fetch or read `CHANGELOG.md` from the kickstart repo to see what changed since the current version.
+## What good output looks like
 
-3. **Show the user what changed** — summarize the relevant changelog entries in plain language:
-   > Your steering docs were generated with kickstart v1. The latest is v3. Here's what changed:
-   > - v2: Added testing-standards steering file, updated default agent config
-   > - v3: Deprecated X skill, added Y skill, changed structure.md format
+**When updates are available:**
+> Your steering docs are on kickstart v1. Latest is v3. Here's what changed:
+>
+> **v2:** Added `update-steering` skill (`.kiro/skills/update-steering/`), added testing-standards to `tech.md`
+> **v3:** Revised skill format, removed deprecated `lint-fix` template
+>
+> Want me to apply these? I'll preserve any manual edits you've made.
 
-4. **Ask for confirmation** — before making changes:
-   > Want me to apply these updates? I'll preserve any manual edits you've made to the steering files.
+**When already current:**
+> You're on kickstart v3 — that's the latest. Nothing to update.
 
-5. **Apply changes** — for each changelog entry between current and latest:
-   - **ADDED** items: generate the new file/section
-   - **CHANGED** items: update the relevant file, merging with any manual edits
-   - **DEPRECATED/REMOVED** items: remove the file/section (confirm with user first if it was manually edited)
+**When a conflict exists (file was manually edited AND the update changes it):**
+> `structure.md` was updated in v2 (adds a "Conventions" section), but you've edited it manually — your naming convention notes overlap with the new section. Here are your options:
+>
+> 1. **Structural alignment** — keep your content, wrap it under the new "Conventions" heading for v2 compatibility
+> 2. **Full merge** — combine the template's section with your notes, removing duplicates
+> 3. **Skip** — leave your file untouched, apply all other v2 changes
+>
+> I'd recommend option 1 — your notes already cover the intent, they just need the heading for structural consistency.
 
-6. **Update version stamp** — change `<!-- kickstart vN -->` in `AGENTS.md` to the new version.
+Identify the conflict, explain consequences, offer options, recommend one.
 
-7. **Report** — summarize what was updated.
+## Applying changes
 
-## Important
+For each changelog entry between current and latest:
 
-- Never overwrite manual edits without asking.
-- If a file was manually edited AND the update would change it, show the user both versions and ask which to keep (or how to merge).
-- If the changelog references a new skill or agent template, fetch it from the kickstart repo's `templates/` directory.
+- **ADDED** items: generate the new file or section from the kickstart templates. Mention the target path (e.g., `.kiro/skills/skill-name/`).
+- **CHANGED** items: update the relevant file, merging with manual edits. If the merge is ambiguous, show both versions and ask.
+- **REMOVED/DEPRECATED** items: if the file was manually edited, confirm before removing. If untouched, remove silently.
+
+After applying, update `<!-- kickstart vN -->` in `AGENTS.md` to the new version.
+
+## Where to find templates
+
+New skills and steering files referenced in the changelog come from the kickstart repo's `templates/` directory. If the templates are available locally (e.g., cloned repo), use the local copy. Fall back to `https://kickstart.md/templates/` only if local files aren't available.
