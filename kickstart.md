@@ -8,13 +8,15 @@ You are bootstrapping AI steering docs and tooling for this repository. Follow t
 
 ## Before you begin
 
-Read the template catalogs to understand what's available:
+Read the template catalog to understand what's available:
 
-- `https://kickstart.md/templates/skills/README.md` — available skills and when to include them
+- `https://kickstart.md/templates/skills/README.md` — available skills, when to include them, and any extra files they require
 
-To fetch an individual template, use the same base URL. For example:
+To fetch a skill template, use the same base URL. For example:
 
 - `https://kickstart.md/templates/skills/update-kickstart/SKILL.md`
+
+Some skills have extra files (listed in the catalog's "Extra files" column). When installing a skill, fetch **all** files from its directory — not just `SKILL.md`.
 
 The `CHANGELOG.md` (for the update-kickstart skill) is at:
 
@@ -188,12 +190,13 @@ Keep AGENTS.md concise. Detailed information belongs in the steering files.
 
 ### Skills from templates
 
-Read the template catalogs and install:
+Read the skills catalog (`https://kickstart.md/templates/skills/README.md`) and install all skills marked "Always" in the "Include when" column. For each skill:
 
-- **Always:** `update-kickstart` skill
-- **Conditional:** any other skills whose inclusion criteria are met
+1. Fetch `SKILL.md` and any extra files listed in the catalog
+2. Place them in `.kiro/skills/[skill-name]/`
+3. Customize with project-specific values where the catalog's "Customization" column indicates
 
-Customize installed templates with project-specific values (commands, paths, conventions).
+If any skills have conditional inclusion criteria that match this repo, install those too.
 
 ## Step 5: Propose conditional files
 
@@ -255,7 +258,13 @@ Summarize what was generated:
 > **Skills:**
 >
 > - `.kiro/skills/update-kickstart/` — update steering docs when kickstart versions change
-> - [any additional skills]
+> - `.kiro/skills/update-steering/` — keep steering docs in sync after code changes
+> - `.kiro/skills/skill-creator/` — create and iterate on new skills
+> - `.kiro/skills/grill-me/` — stress-test plans and designs
+> - `.kiro/skills/find-skills/` — discover and install new skills
+> - `.kiro/skills/prototype/` — build throwaway prototypes to explore designs
+> - `.kiro/skills/improve-codebase-architecture/` — find architecture improvement opportunities
+> - [any additional conditional skills]
 >
 > **Root:**
 >
@@ -263,7 +272,7 @@ Summarize what was generated:
 >
 > These files are ready to commit. The steering docs will be loaded automatically in future Kiro sessions.
 >
-> To update these docs later when a new kickstart version is available, use the `/update-kickstart` skill.
+> To update these docs later when a new kickstart version is available, use the `update-kickstart` skill. To keep docs in sync after code changes, use the `update-steering` skill.
 
 ## Guidelines
 
