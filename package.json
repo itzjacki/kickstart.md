@@ -1,0 +1,32 @@
+{
+  "name": "kickstart.md",
+  "version": "1.0.0",
+  "description": "CLI tool that helps kickstart AI development in your project",
+  "keywords": [
+    "AI",
+    "LLM",
+    "kiro",
+    "kiro-cli",
+    "kickstart"
+  ],
+  "homepage": "https://github.com/itzjacki/kickstart.md#readme",
+  "bugs": {
+    "url": "https://github.com/itzjacki/kickstart.md/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itzjacki/kickstart.md.git"
+  },
+  "license": "MIT",
+  "author": "Team Summit",
+  "type": "module",
+  "bin": {
+    "kickstart.md": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.8.1"
+  }
+}
