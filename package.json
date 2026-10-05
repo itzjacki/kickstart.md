@@ -21,12 +21,19 @@
   "author": "Team Summit",
   "type": "module",
   "bin": {
-    "kickstart.md": "./index.js"
+    "kickstart.md": "./index.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": ">=24"
+  },
   "dependencies": {
     "@clack/prompts": "^1.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2"
   }
 }

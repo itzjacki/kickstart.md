@@ -4,10 +4,12 @@ import { text, isCancel, select, confirm } from "@clack/prompts";
 
 async function main() {
   // Get user's name
-  const name = await text({
-    message: "What is your name?",
-    placeholder: "John Doe",
-  });
+  const name = String(
+    await text({
+      message: "What is your name?",
+      placeholder: "John Doe",
+    }),
+  );
 
   // Get user's preferred framework
   const framework = await select({
