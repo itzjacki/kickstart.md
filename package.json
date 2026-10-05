@@ -21,7 +21,7 @@
   "author": "Team Summit",
   "type": "module",
   "bin": {
-    "kickstart.md": "./index.ts"
+    "kickstart.md": "./src/index.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
