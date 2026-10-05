@@ -8,7 +8,7 @@ interface Prompt {
 }
 
 export const prompt = async ({ promptString }: Prompt): Promise<string> => {
-  const args: string[] = ["chat", "--non-interactive", "--trust-all-tools"];
+  const args: string[] = ["chat", "--no-interactive", "--trust-all-tools"];
 
   args.push(promptString);
 
