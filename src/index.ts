@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
 import { text, isCancel, select, confirm } from "@clack/prompts";
+import { prompt } from "./prompt.ts";
 
 async function main() {
+  const result = await prompt({ prompt: "what is the capital in norway" });
+
   // Get user's name
   const name = String(
     await text({

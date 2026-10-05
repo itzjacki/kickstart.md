@@ -41,7 +41,9 @@ If a file doesn't exist, skip it. Don't create new files unless the user asks.
 ## What good output looks like
 
 **When changes are found:**
+
 > I checked git history and the working tree against your steering docs. Here's what's stale:
+>
 > - `tech.md`: Still lists Express, but you've switched to Fastify
 > - `AGENTS.md`: Missing the new caching layer decision
 >
@@ -50,6 +52,7 @@ If a file doesn't exist, skip it. Don't create new files unless the user asks.
 Concise, specific, actionable. List what's stale and why, then ask.
 
 **When nothing needs changing:**
+
 > I reviewed your steering docs against recent changes (checked git log, working tree, read AGENTS.md and tech.md). Everything is still accurate — no updates needed.
 >
 > If you'd like me to add coverage for [something not currently documented], let me know.
@@ -57,9 +60,11 @@ Concise, specific, actionable. List what's stale and why, then ask.
 Show what you checked so the user trusts the review happened. Offer next steps.
 
 **When the request doesn't apply (wrong repo, no steering files):**
+
 > This repo doesn't have steering docs that reference [what the user mentioned]. Are you in the right directory?
 >
 > If you re-run this in the correct repo, here's what I'd update based on your description:
+>
 > - `tech.md`: Replace Express with Fastify, note the plugin system
 > - `structure.md`: Add the new `src/middleware/` directory
 > - `AGENTS.md`: Update framework references

@@ -27,6 +27,7 @@ Update this repository's AI steering docs and tooling to the latest kickstart ve
 ## What good output looks like
 
 **When updates are available:**
+
 > Your steering docs are on kickstart v1. Latest is v3. Here's what changed:
 >
 > **v2:** Added `update-steering` skill (`.kiro/skills/update-steering/`), added testing-standards to `tech.md`
@@ -35,9 +36,11 @@ Update this repository's AI steering docs and tooling to the latest kickstart ve
 > Want me to apply these? I'll preserve any manual edits you've made.
 
 **When already current:**
+
 > You're on kickstart v3 — that's the latest. Nothing to update.
 
 **When a conflict exists (file was manually edited AND the update changes it):**
+
 > `structure.md` was updated in v2 (adds a "Conventions" section), but you've edited it manually — your naming convention notes overlap with the new section. Here are your options:
 >
 > 1. **Structural alignment** — keep your content, wrap it under the new "Conventions" heading for v2 compatibility

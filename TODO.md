@@ -32,6 +32,7 @@ Out of scope: tone, workflow preferences, prescriptive style guides.
 ## Artifacts to generate in target repos
 
 ### Always generated
+
 - `AGENTS.md` — project context + agent constraints (always loaded by Kiro)
 - `.kiro/steering/product.md` — what the project is, target users, business objectives
 - `.kiro/steering/tech.md` — frameworks, libraries, dev tools, build/test/lint commands
@@ -40,6 +41,7 @@ Out of scope: tone, workflow preferences, prescriptive style guides.
 - `.kiro/skills/` — additional skills sourced from established, well-tested collections (not invented from scratch). Some will always be included based on the kickstart workflow; others conditional on what's detected in the repo.
 
 ### Conditional (only if relevant)
+
 - `.kiro/steering/code-conventions.md` — if clear patterns are detected in the codebase
 - `.kiro/steering/api-standards.md` — if it's an API project
 - `.kiro/steering/testing-standards.md` — if tests exist

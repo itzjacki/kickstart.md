@@ -148,7 +148,10 @@ Save assertions alongside the test cases:
       "prompt": "User's task prompt",
       "expected_output": "Description of expected result",
       "assertions": [
-        {"text": "Output contains a valid JSON array", "type": "content_check"}
+        {
+          "text": "Output contains a valid JSON array",
+          "type": "content_check"
+        }
       ]
     }
   ]
@@ -174,6 +177,7 @@ For each test case, spawn a **comparator** subagent with these instructions:
 > Inputs: output_a_path, output_b_path, eval_prompt, expectations (optional).
 >
 > Process:
+>
 > 1. Read both outputs
 > 2. Understand what the task requires
 > 3. Generate a rubric with content criteria (correctness, completeness, accuracy) and structure criteria (organization, formatting, usability), adapted to the task
@@ -182,17 +186,30 @@ For each test case, spawn a **comparator** subagent with these instructions:
 > 6. Pick a winner (ties should be rare — one is usually better)
 >
 > Output as `comparison.json`:
+>
 > ```json
 > {
 >   "winner": "A|B|TIE",
 >   "reasoning": "Why the winner was chosen",
 >   "rubric": {
->     "A": {"content": {}, "structure": {}, "content_score": 0, "structure_score": 0, "overall_score": 0},
->     "B": {"content": {}, "structure": {}, "content_score": 0, "structure_score": 0, "overall_score": 0}
+>     "A": {
+>       "content": {},
+>       "structure": {},
+>       "content_score": 0,
+>       "structure_score": 0,
+>       "overall_score": 0
+>     },
+>     "B": {
+>       "content": {},
+>       "structure": {},
+>       "content_score": 0,
+>       "structure_score": 0,
+>       "overall_score": 0
+>     }
 >   },
 >   "output_quality": {
->     "A": {"score": 0, "strengths": [], "weaknesses": []},
->     "B": {"score": 0, "strengths": [], "weaknesses": []}
+>     "A": { "score": 0, "strengths": [], "weaknesses": [] },
+>     "B": { "score": 0, "strengths": [], "weaknesses": [] }
 >   }
 > }
 > ```
@@ -208,6 +225,7 @@ After comparison, spawn an **analyzer** subagent with these instructions:
 > Inputs: winner (A or B), both skill paths, both transcript/output paths, comparison_result_path.
 >
 > Process:
+>
 > 1. Read comparison result — note what the comparator valued
 > 2. Read both skills — identify structural differences (clarity, examples, edge cases)
 > 3. Read both transcripts — compare execution patterns, tool usage, errors
@@ -216,17 +234,23 @@ After comparison, spawn an **analyzer** subagent with these instructions:
 > 6. Generate prioritized improvement suggestions
 >
 > Output as `analysis.json`:
+>
 > ```json
 > {
->   "comparison_summary": {"winner": "", "comparator_reasoning": ""},
+>   "comparison_summary": { "winner": "", "comparator_reasoning": "" },
 >   "winner_strengths": ["specific strength with evidence"],
 >   "loser_weaknesses": ["specific weakness with evidence"],
 >   "instruction_following": {
->     "winner": {"score": 0, "issues": []},
->     "loser": {"score": 0, "issues": []}
+>     "winner": { "score": 0, "issues": [] },
+>     "loser": { "score": 0, "issues": [] }
 >   },
 >   "improvement_suggestions": [
->     {"priority": "high|medium|low", "category": "instructions|tools|examples|structure", "suggestion": "concrete change", "expected_impact": "what it would fix"}
+>     {
+>       "priority": "high|medium|low",
+>       "category": "instructions|tools|examples|structure",
+>       "suggestion": "concrete change",
+>       "expected_impact": "what it would fix"
+>     }
 >   ]
 > }
 > ```
@@ -242,6 +266,7 @@ If assertions were defined, spawn a **grader** subagent with these instructions:
 > Inputs: expectations (list of assertion strings), outputs_dir (directory containing output files).
 >
 > Process:
+>
 > 1. Read output files
 > 2. For each expectation: search for evidence, verdict PASS or FAIL, cite specific evidence
 > 3. Extract implicit claims from outputs and verify them
@@ -250,14 +275,21 @@ If assertions were defined, spawn a **grader** subagent with these instructions:
 > Grading criteria: PASS = clear evidence + genuine task completion. FAIL = no evidence, contradicting evidence, or superficial compliance. When uncertain, fail.
 >
 > Output as `grading.json`:
+>
 > ```json
 > {
 >   "expectations": [
->     {"text": "assertion text", "passed": true, "evidence": "specific quote or description"}
+>     {
+>       "text": "assertion text",
+>       "passed": true,
+>       "evidence": "specific quote or description"
+>     }
 >   ],
->   "summary": {"passed": 0, "failed": 0, "total": 0, "pass_rate": 0},
+>   "summary": { "passed": 0, "failed": 0, "total": 0, "pass_rate": 0 },
 >   "eval_feedback": {
->     "suggestions": [{"reason": "why an assertion is weak or what's missing"}],
+>     "suggestions": [
+>       { "reason": "why an assertion is weak or what's missing" }
+>     ],
 >     "overall": "Brief assessment"
 >   }
 > }
