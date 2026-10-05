@@ -13,12 +13,29 @@ Status:
 - [x] Scaffold TypeScript/Node project (`src/`, ESM, Node ≥24, `@clack/prompts`)
 - [x] `src/prompt.ts` — wrapper around `kiro-cli chat --non-interactive` (via `execFile`)
 - [x] `src/index.ts` — CLI entry point (bin: `kickstart.md`) with interactive clack flow
-- [ ] Map the existing single-prompt steps (analyze → core steering → skills → agents → optional steering) onto discrete orchestrator steps, each its own scoped `kiro-cli` call
-- [ ] Pass structured context between steps (e.g., analysis output feeds generation)
-- [ ] Interleave `@clack/prompts` user questions between agent calls where input is genuinely needed
-- [ ] Installer-style UX: announce planned steps upfront, show per-step progress, summarize at the end
-- [ ] Scope `--trust-tools` per step so each agent call only gets the tools it needs
-- [ ] Error handling / retry for individual steps
+
+### Pipeline stages
+
+The run is an ordered pipeline. Each agent-backed stage makes its own scoped `kiro-cli` call; artifacts flow from earlier stages into later ones. Stages 3–10 are currently placeholder tasks in `src/index.ts` (return a `"Placeholder for step ..."` string); only analysis is implemented.
+
+- [x] 1. Introduction — announce planned steps up front (`@clack/prompts` intro; no agent call)
+- [x] 2. Analyze codebase — produce agent-oriented analysis artifact (`src/steps/codebase-analysis.ts`)
+- [ ] 3. Ask questions — turn analysis gaps/`unknown`s into plain-language user questions; produce answers artifact _(placeholder)_
+- [ ] 4. Generate mandatory steering files — `AGENTS.md`, `product.md`, `tech.md`, `structure.md` _(placeholder)_
+- [ ] 5. Recommend additional steering files — agent recommends, user confirms/adjusts selection _(placeholder)_
+- [ ] 6. Generate additional steering files (if any) _(placeholder)_
+- [~] 7. Recommend skills — selection logic implemented (`src/skills.ts`); not yet wired into pipeline _(placeholder in flow)_
+- [ ] 8. Install selected skills (likely `npx skills`) _(placeholder)_
+- [ ] 9. Recommend MCP servers — agent determines relevance, looks them up online, user adjusts _(placeholder)_
+- [ ] 10. Add selected MCP servers (disabled suggestions in agent config) _(placeholder)_
+- [x] 11. Summarize — report everything created/installed (`@clack/prompts` outro; no agent call)
+
+### Cross-cutting
+
+- [ ] Pass structured context between stages (analysis → questions → generation)
+- [ ] Installer-style UX: announce up front, per-stage progress, final summary
+- [x] Scope `--trust-tools` per call (read-only structured tools by default; no `shell`)
+- [ ] Error handling / retry for individual stages
 - [ ] Decide the fate of the legacy `kickstart.md` prompt once the script reaches parity (retire or keep as fallback)
 
 ## Workflow

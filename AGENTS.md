@@ -18,10 +18,29 @@ This repo contains:
 
 Toolchain: TypeScript (ESM, `"type": "module"`, Node ≥24), `@clack/prompts` for interactive CLI UX. Typecheck with `npx tsc --noEmit`.
 
+## Pipeline stages
+
+The orchestrator runs the kickstart process as an ordered pipeline. Each stage is a discrete step; stages that need the agent make their own scoped `kiro-cli` call via `src/prompt.ts`. Text/data artifacts produced by earlier stages are passed into later ones.
+
+1. **Introduction** — tell the user what the script is about to do (no agent call; `@clack/prompts` intro).
+2. **Analyze codebase** — agent analyzes the repo and produces a dense, agent-oriented descriptive text artifact consumed by later stages. _(implemented: `src/steps/codebase-analysis.ts`)_
+3. **Ask questions** — using gaps/`unknown`s from the analysis, ask the user plain-language questions to fill in what the code can't reveal (notably product/domain). Produces a second text artifact used later.
+4. **Generate mandatory steering files** — generate the always-created artifacts (`AGENTS.md`, `.kiro/steering/product.md`, `tech.md`, `structure.md`) from the analysis + answers.
+5. **Recommend additional steering files** — agent analyzes which optional steering files the repo would benefit from (e.g. `api-standards.md`, `testing-standards.md`), presents a recommendation, and lets the user confirm/adjust the selection.
+6. **Generate additional steering files** — generate the confirmed optional steering files (if any).
+7. **Recommend skills** — agent selects which skills from the predefined catalog fit the repo, presents a recommendation, and lets the user adjust. _(selection implemented: `src/skills.ts`)_
+8. **Install selected skills** — install the chosen skills (likely via `npx skills`).
+9. **Recommend MCP servers** — agent determines which MCP servers may be relevant, looks them up online for details, presents a recommendation, and lets the user adjust.
+10. **Add selected MCP servers** — add the chosen MCP servers (as disabled suggestions in agent config per the MCP decision below).
+11. **Summarize** — summarize everything that was created/installed (no agent call; `@clack/prompts` outro).
+
+Stage status is tracked in `TODO.md`.
+
 ## Key decisions
 
 - Architecture: the tool is a **script-based orchestrator** (TypeScript/Node CLI), not a single hand-off prompt. The script makes multiple scoped `kiro-cli chat` calls — one per logical step — so the tool controls sequencing, can run deterministic logic and user prompts between agent calls, and is easier to debug than a monolithic prompt. The legacy `kickstart.md` prompt is retained during the transition and will be superseded.
 - Agent invocation goes through a single wrapper (`src/prompt.ts`) around `kiro-cli chat --non-interactive`, using `execFile` (argv array, no shell) to avoid injection/quoting issues. The wrapper is the one place where kiro-cli flags (e.g. `--trust-tools`) are mapped.
+- No custom agent config files are placed in the user's repo or global `~/.kiro`. `kiro-cli --agent` only resolves agents discoverable from the cwd (the user's repo) or `~/.kiro/agents`, and writing files into either location is intrusive and violates the friction-free principle. Consequence: command-level shell fencing (which requires an agent config's `toolsSettings.shell`) is not available, so agent calls are scoped with `--trust-tools` at tool granularity only. `shell` is not granted by default; stages rely on the read-only structured tools (`read`, `grep`, `glob`, `code`). The known gap is git history (`git log`/`blame`/`diff`), which has no structured-tool equivalent — revisit non-intrusively if a stage genuinely needs it.
 - The entry-point prompt lives in `kickstart.md` at the root
 - `README.md` is for humans on GitHub; `AGENTS.md` (this file) is for AI working on this repo; `kickstart.md` is for AI working on other repos
 - Scope is limited to what an AI agent needs to work effectively: project context, environment/tooling, observed conventions, agent constraints
