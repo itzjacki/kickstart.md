@@ -4,6 +4,23 @@
 
 Create a meta-toolkit that an AI agent (e.g., Kiro) can follow to bootstrap proper AI steering docs and tooling in any target repository.
 
+## Architecture rewrite: script-based orchestrator (in progress)
+
+We are rewriting kickstart.md from a single hand-off prompt into a **script-based orchestrator** — a TypeScript/Node CLI that calls `kiro-cli` multiple times, once per logical step, to get explicit control over the process (sequencing, deterministic logic, user prompts between agent calls, and easier debugging).
+
+Status:
+
+- [x] Scaffold TypeScript/Node project (`src/`, ESM, Node ≥24, `@clack/prompts`)
+- [x] `src/prompt.ts` — wrapper around `kiro-cli chat --non-interactive` (via `execFile`)
+- [x] `src/index.ts` — CLI entry point (bin: `kickstart.md`) with interactive clack flow
+- [ ] Map the existing single-prompt steps (analyze → core steering → skills → agents → optional steering) onto discrete orchestrator steps, each its own scoped `kiro-cli` call
+- [ ] Pass structured context between steps (e.g., analysis output feeds generation)
+- [ ] Interleave `@clack/prompts` user questions between agent calls where input is genuinely needed
+- [ ] Installer-style UX: announce planned steps upfront, show per-step progress, summarize at the end
+- [ ] Scope `--trust-tools` per step so each agent call only gets the tools it needs
+- [ ] Error handling / retry for individual steps
+- [ ] Decide the fate of the legacy `kickstart.md` prompt once the script reaches parity (retire or keep as fallback)
+
 ## Workflow
 
 1. User opens a target repo in Kiro

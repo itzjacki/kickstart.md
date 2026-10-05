@@ -2,7 +2,11 @@
 
 ## The short version
 
-A tool that prepares your project for AI development with as little friction as possible. Simply run the following command:
+A tool that prepares your project for AI development with as little friction as possible.
+
+> **Heads up — rewrite in progress.** kickstart.md is moving from a single prompt you hand to your agent into a small CLI that orchestrates the process by calling `kiro-cli` for you, step by step. This gives it tighter control over each stage and a smoother, installer-style experience. The sections below describe what the tool does; the exact command to run it will be finalized as the CLI rewrite lands.
+
+The classic way to run it (the single-prompt approach, still works during the transition):
 
 ```
 kiro-cli chat "Go to https://kickstart.md/kickstart.md and execute the instructions found there."
@@ -12,13 +16,15 @@ _PS: Right now the tool follows Kiro's standard for steering file structure, but
 
 ## The slightly longer version
 
-Agentic AI Coding tools like Claude Code, Kiro and Cursor are way more effective if they're given a proper structure to operate in. This structure usually includes some steering documentation, skills and subagent specifications. By pointing your LLM at kickstart.md, it generates all of this stuff for you based on best pracices, the peculiarities of your particular project, and (some) user input.
+Agentic AI Coding tools like Claude Code, Kiro and Cursor are way more effective if they're given a proper structure to operate in. This structure usually includes some steering documentation, skills and subagent specifications. kickstart.md generates all of this stuff for you based on best pracices, the peculiarities of your particular project, and (some) user input.
 
-This repo contains an initialization prompt (`kickstart.md`) which tells your agent about the most important steering docs, what they should focus on. It also comes with a bunch of templates for useful skills and subagents which should be useful in most projects.
+Rather than handing your agent one big prompt and hoping it runs end-to-end, kickstart.md is becoming a script that drives the process: it makes multiple, focused calls to `kiro-cli` — one per step (analyze, generate steering files, pick skills, pick subagents, suggest extras) — and runs its own logic and asks you plain-language questions in between. That means a more predictable, debuggable, installer-like experience that tells you what it's going to do, shows progress as it goes, and summarizes what it created.
+
+This repo also comes with a bunch of templates for useful skills and subagents which should be useful in most projects.
 
 ## What does kickstart.md do?
 
-When you run the prompt, the following things happen, in order:
+When you run it, the following things happen, in order:
 
 ### Step 1: Analysis and orientation
 

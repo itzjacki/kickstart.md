@@ -2,7 +2,8 @@
 
 import { text, isCancel, select, confirm } from "@clack/prompts";
 import { prompt } from "./prompt.ts";
-import { selectSkills } from "./skills.ts"
+import { selectSkills } from "./skills.ts";
+import { analyzeCodebase } from "./steps/codebase-analysis.ts";
 
 async function main() {
   const result = await prompt({
@@ -10,8 +11,12 @@ async function main() {
       "what is the capital in norway? Write the answer in a file called capital.txt",
   });
 
+  const analysisResult = await analyzeCodebase();
+  console.log(analysisResult);
+
   const skills = await selectSkills({
-    projectContext: "Wideroe.no — the public website for Widerøe (Norwegian regional airline). Next.js 16 + Optimizely CMS, replacing a legacy AEM SPA. Serves content pages and transactional flows (booking, manage booking, check-in, loyalty) for travellers, plus a CMS interface for content editors.",
+    projectContext:
+      "Wideroe.no — the public website for Widerøe (Norwegian regional airline). Next.js 16 + Optimizely CMS, replacing a legacy AEM SPA. Serves content pages and transactional flows (booking, manage booking, check-in, loyalty) for travellers, plus a CMS interface for content editors.",
     userInput: "",
   });
   console.log("skills", skills);

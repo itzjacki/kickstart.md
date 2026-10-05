@@ -2,16 +2,26 @@
 
 ## Project overview
 
-kickstart.md is a meta-toolkit. It contains a prompt (`kickstart.md`) that an AI agent reads and executes against a _different_ target repository to bootstrap AI steering docs and tooling there.
+kickstart.md is a meta-toolkit that bootstraps AI steering docs and tooling in a target repository.
 
-This repo does NOT contain application code. It contains:
+It is being rewritten from a single-prompt tool into a **script-based orchestrator**: a TypeScript/Node CLI that drives the kickstart process by making multiple, scoped calls to `kiro-cli` instead of handing the agent one large prompt to execute end-to-end. This gives the tool explicit control over each step (analysis, generation, selection, verification), lets it interleave deterministic logic and user prompts (via `@clack/prompts`) between agent calls, and makes the process more predictable and debuggable.
 
-- `kickstart.md` — the entry-point prompt an AI agent follows to set up a target repo
+This repo contains:
+
+- `src/` — the TypeScript CLI (the orchestrator)
+  - `src/index.ts` — CLI entry point (bin: `kickstart.md`); drives the interactive flow
+  - `src/prompt.ts` — thin wrapper around `kiro-cli chat --non-interactive` used to invoke the agent for individual steps
+- `kickstart.md` — the legacy entry-point prompt (being superseded by the script; retained during the transition)
+- `templates/` — bundled skill/agent templates and their catalogs
 - `TODO.md` — project roadmap and checklist
-- Templates and examples (as they are developed)
+- `.kiro/` — this repo's own steering/skills
+
+Toolchain: TypeScript (ESM, `"type": "module"`, Node ≥24), `@clack/prompts` for interactive CLI UX. Typecheck with `npx tsc --noEmit`.
 
 ## Key decisions
 
+- Architecture: the tool is a **script-based orchestrator** (TypeScript/Node CLI), not a single hand-off prompt. The script makes multiple scoped `kiro-cli chat` calls — one per logical step — so the tool controls sequencing, can run deterministic logic and user prompts between agent calls, and is easier to debug than a monolithic prompt. The legacy `kickstart.md` prompt is retained during the transition and will be superseded.
+- Agent invocation goes through a single wrapper (`src/prompt.ts`) around `kiro-cli chat --non-interactive`, using `execFile` (argv array, no shell) to avoid injection/quoting issues. The wrapper is the one place where kiro-cli flags (e.g. `--trust-tools`) are mapped.
 - The entry-point prompt lives in `kickstart.md` at the root
 - `README.md` is for humans on GitHub; `AGENTS.md` (this file) is for AI working on this repo; `kickstart.md` is for AI working on other repos
 - Scope is limited to what an AI agent needs to work effectively: project context, environment/tooling, observed conventions, agent constraints
@@ -34,5 +44,6 @@ This repo does NOT contain application code. It contains:
 
 - When a decision is made during planning or implementation, update this file immediately. Do not rely on chat history to preserve decisions.
 - Keep `TODO.md` in sync with current progress.
-- This is a documentation/prompt project — there is no build step or test suite.
+- The orchestrator is a TypeScript/Node project. Typecheck changes with `npx tsc --noEmit` before considering them done. There is no test suite yet.
+- The legacy `kickstart.md` prompt and the `templates/` catalogs are plain docs/prompts with no build step.
 - Do not ever touch the project root README.md, index.html or styles.css unless _explicitly_ asked to do so. They are only to be worked on by a human.
