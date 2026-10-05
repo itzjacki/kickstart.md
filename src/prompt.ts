@@ -7,7 +7,13 @@ const execFileAsync = promisify(execFile);
 const defaultAllowedKiroTools = ["read", "grep", "glob", "code"];
 
 type OptionalKiroTool =
-  "write" | "shell" | "use_aws" | "subagent" | "task" | "web_fetch";
+  | "write"
+  | "shell"
+  | "use_aws"
+  | "subagent"
+  | "task"
+  | "web_fetch"
+  | "web_search";
 type DefaultKiroTool = (typeof defaultAllowedKiroTools)[number];
 type KiroTool = OptionalKiroTool & DefaultKiroTool;
 
