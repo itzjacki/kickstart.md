@@ -3,31 +3,18 @@ import { promisify } from "util";
 
 const execFileAsync = promisify(execFile);
 
-export type KiroTool =
-  | "read"
-  | "write"
-  | "shell"
-  | "grep"
-  | "glob"
-  | "code"
-  | "use_aws"
-  | "subagent"
-  | "task"
-  | "web_fetch";
-
-export const prompt = async (prompt: {
+interface Prompt {
   promptString: string;
-  allowedTools?: KiroTool[];
-}): Promise<string> => {
-  const args: string[] = ["chat", "--non-interactive"];
+}
 
-  if (prompt.allowedTools !== undefined) {
-    args.push(`--trust-tools=${prompt.allowedTools.join(",")}`);
-  }
+export const prompt = async ({ promptString }: Prompt): Promise<string> => {
+  const args: string[] = ["chat", "--non-interactive", "--trust-all-tools"];
 
-  args.push(prompt.promptString);
+  args.push(promptString);
 
   const result = await execFileAsync("kiro-cli", args, { encoding: "utf-8" });
+
+  console.log(result.stderr);
 
   return result.stdout;
 };

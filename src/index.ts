@@ -5,7 +5,8 @@ import { prompt } from "./prompt.ts";
 
 async function main() {
   const result = await prompt({
-    promptString: "what is the capital in norway",
+    promptString:
+      "what is the capital in norway? Write the answer in a file called capital.txt",
   });
 
   // Get user's name
