@@ -39,6 +39,7 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 - [x] Debug mode — `--debug`/`-d` or `KICKSTART_DEBUG` (`src/debug.ts`); surfaces each `kiro-cli` call's `stderr` from `prompt()` via clack `log.*` (never raw `console.*`)
 - [x] Release workflow — pinned `release-it` config in `package.json`; `npm run release -- patch|minor|major` typechecks, bumps, tags, creates a GitHub Release, and publishes to npm. Do not execute without explicit release approval.
 - [x] Release workflow — pinned `release-it` config in `package.json`; `npm run release -- patch|minor|major` typechecks, bumps, tags, creates a GitHub Release, and publishes to npm. Do not execute without explicit release approval.
+- [x] Startup dependency preflight — checks that `kiro-cli` is on PATH for real runs, using clack logging for failures and skipping the check in mock mode. Node/npm-managed runtime requirements are handled by the launcher/package metadata.
 - [ ] Error handling / retry for individual stages
 - [ ] Decide the fate of the legacy `kickstart.md` prompt once the script reaches parity (retire or keep as fallback)
 

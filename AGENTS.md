@@ -20,6 +20,7 @@ Run locally: `node --experimental-strip-types ./src/index.ts`. Stage status: `TO
   prompts _between_ spinner blocks. All diagnostic output must use clack `log.*`,
   never `console.*` (clack owns the terminal).
 - ESM with explicit `.ts` import extensions; `exactOptionalPropertyTypes` is on.
+- Startup preflight checks that `kiro-cli` is on PATH for real runs; mock mode skips that check. Node/npm-managed runtime requirements are handled by the launcher/package metadata rather than manually checked.
 
 ## Keep in sync
 

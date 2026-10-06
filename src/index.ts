@@ -24,7 +24,8 @@ import { enableDebugMode, isDebugMode } from "./debug.ts";
 import { printHelp } from "./help.ts";
 import { installSkills } from "./install-skills.ts";
 import { showSummary } from "./summary.ts";
-import {selectMCPs} from "./steps/select-mcps.ts";
+import { selectMCPs } from "./steps/select-mcps.ts";
+import { checkRuntimeDependencies } from "./dependencies.ts";
 
 async function main() {
   const { values } = parseArgs({
@@ -47,6 +48,20 @@ async function main() {
 
   if (values.debug) {
     enableDebugMode();
+  }
+
+  const dependencyIssues = await checkRuntimeDependencies({
+    skipKiroCli: isMockMode(),
+  });
+  if (dependencyIssues.length > 0) {
+    log.error(
+      [
+        "Cannot start kickstart.md because required runtime dependencies are missing:",
+        ...dependencyIssues.map(({ name, detail }) => `- ${name}: ${detail}`),
+      ].join("\n"),
+    );
+    process.exitCode = 1;
+    return;
   }
 
   // Stage 1: Introduction

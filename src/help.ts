@@ -30,6 +30,9 @@ OPTIONS
 
 ENVIRONMENT
   KICKSTART_MOCK    Set to "true" to enable mock mode.
-  KICKSTART_DEBUG   Set to "true" to enable debug mode.`,
+  KICKSTART_DEBUG   Set to "true" to enable debug mode.
+
+REQUIREMENTS
+  Real runs require kiro-cli on PATH; --mock skips the kiro-cli check.`,
   );
 }
