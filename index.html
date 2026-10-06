@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="kickstart.md prepares projects for AI-assisted development."
+    />
+    <title>kickstart.md — Prepare your project for AI development</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./">kickstart.md</a>
+        <nav aria-label="Primary navigation">
+          <a href="https://github.com/itzjacki/kickstart.md">GitHub</a>
+          <a href="https://github.com/itzjacki/kickstart.md/blob/main/README.md"
+            >Documentation</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <h1 id="hero-title">
+            Give your agent the
+            <button
+              class="topic-button"
+              type="button"
+              data-topic-cycle
+              title="Change title topic"
+            >
+              <span class="topic-label-sizer" aria-hidden="true">context</span>
+              <span class="topic-label" aria-live="polite">context</span>
+            </button>
+            it craves
+          </h1>
+          <p class="hero-intro">
+            kickstart.md analyzes a repository and helps set up lean steering
+            docs, skills, and tooling for AI-assisted development.
+          </p>
+          <div class="hero-command" aria-label="kickstart.md command">
+            <div class="command-text">
+              <code>npx kickstart.md</code>
+              <small class="system-requirements">Requires Node.js 24+</small>
+            </div>
+            <button
+              class="copy-button"
+              type="button"
+              data-copy-command="npx kickstart.md"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+        <figure class="hero-illustration">
+          <figcaption class="robot-caption">
+            beep boop<br />delicious context
+          </figcaption>
+          <img
+            class="robot-image"
+            src="assets/robot.svg"
+            alt="A friendly blue robot illustration"
+          />
+        </figure>
+      </section>
+
+      <section aria-labelledby="what-title">
+        <div class="section-heading">
+          <h2 id="what-title">Get started with agentic development</h2>
+          <p>
+            This tool helps you boostrap your repository for agentic development
+            with Kiro. It analyzes your code base, asks questions, and generates
+            steering documentation and sets up tools to give you a good starting
+            point for AI-driven work.
+          </p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>Project context</h3>
+            <p>
+              A concise description of the product, its purpose, and the people
+              it serves.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Technical context</h3>
+            <p>
+              Non-obvious tooling, commands, constraints, and technical
+              direction relevant to future work.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Agent guidance</h3>
+            <p>
+              Practical boundaries and steering files that help an AI coding
+              tool work effectively in the repository.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Developed by Team Summit @ Norwegian Air Shuttle</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
