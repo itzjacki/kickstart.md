@@ -20,9 +20,9 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 
 - [x] 1. Introduction — announce planned steps up front (`@clack/prompts` intro; no agent call)
 - [x] 2. Analyze codebase — produce agent-oriented analysis artifact (`src/steps/codebase-analysis.ts`)
-- [ ] 3. Ask questions — turn analysis gaps/`unknown`s into plain-language user questions; produce answers artifact _(placeholder)_
-- [ ] 4. Generate mandatory steering files — `AGENTS.md`, `product.md`, `tech.md`, `structure.md` _(placeholder)_
-- [ ] 5. Recommend additional steering files — agent recommends, user confirms/adjusts selection _(placeholder)_
+- [x] 3. Ask questions — agent decides (actively) which plain-language questions fill analysis gaps/`unknown`s; asked one-at-a-time via clack; produces answers artifact (`src/steps/ask-questions.ts`)
+- [x] 4. Generate mandatory steering files — `AGENTS.md`, `product.md`, `tech.md` (lean/research-backed; `structure.md` deliberately excluded as situational) (`src/steps/generate-mandatory-files.ts`)
+- [ ] 5. Recommend additional steering files — agent recommends situational files (incl. `structure.md`), user confirms/adjusts selection _(placeholder)_
 - [ ] 6. Generate additional steering files (if any) _(placeholder)_
 - [~] 7. Recommend skills — selection logic implemented (`src/skills.ts`); not yet wired into pipeline _(placeholder in flow)_
 - [ ] 8. Install selected skills (likely `npx skills`) _(placeholder)_
@@ -32,7 +32,7 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 
 ### Cross-cutting
 
-- [ ] Pass structured context between stages (analysis → questions → generation)
+- [~] Pass structured context between stages (analysis → questions wired; questions → generation pending)
 - [ ] Installer-style UX: announce up front, per-stage progress, final summary
 - [x] Scope `--trust-tools` per call (read-only structured tools by default; no `shell`)
 - [ ] Error handling / retry for individual stages
@@ -70,12 +70,12 @@ Out of scope: tone, workflow preferences, prescriptive style guides.
 - `AGENTS.md` — project context + agent constraints (always loaded by Kiro)
 - `.kiro/steering/product.md` — what the project is, target users, business objectives
 - `.kiro/steering/tech.md` — frameworks, libraries, dev tools, build/test/lint commands
-- `.kiro/steering/structure.md` — file organization, naming conventions, architecture
 - `.kiro/skills/update-kickstart/SKILL.md` — skill to update steering docs when kickstart versions change
 - `.kiro/skills/` — additional skills sourced from established, well-tested collections (not invented from scratch). Some will always be included based on the kickstart workflow; others conditional on what's detected in the repo.
 
 ### Conditional (only if relevant)
 
+- `.kiro/steering/structure.md` — if the repo's layout is genuinely non-obvious (e.g. a large/unusual monorepo); demoted from always-generated per research (directory overviews don't aid navigation and cost context)
 - `.kiro/steering/code-conventions.md` — if clear patterns are detected in the codebase
 - `.kiro/steering/api-standards.md` — if it's an API project
 - `.kiro/steering/testing-standards.md` — if tests exist

@@ -2,6 +2,8 @@
 
 import { intro, outro, log, tasks, cancel } from "@clack/prompts";
 import { analyzeCodebase } from "./steps/codebase-analysis.ts";
+import { askQuestions } from "./steps/ask-questions.ts";
+import { generateMandatoryFiles } from "./steps/generate-mandatory-files.ts";
 import { selectSkills } from "./skills.ts";
 
 async function main() {
@@ -17,23 +19,40 @@ async function main() {
   });
   console.log("skills", skills);
 
+  // Stage 2: Analyze codebase. Runs in a spinner; capture its artifact for
+  // later stages.
+  let analysis = "";
   await tasks([
-    // Stage 2: Analyze codebase
     {
       title: "Analyzing codebase",
       task: async () => {
-        await analyzeCodebase();
+        analysis = await analyzeCodebase();
         return "Codebase analyzed";
       },
     },
-    {
-      title: "Asking questions",
-      task: async () => "Placeholder for step: ask questions",
-    },
+  ]);
+
+  // Stage 3: Ask questions. This step is interactive (it prompts the user one
+  // question at a time), so it must run outside the spinner `tasks` block.
+  const questions = await askQuestions(analysis);
+  log.info(
+    questions.answered.length > 0
+      ? `Captured ${questions.answered.length} answer(s).`
+      : "No questions needed.",
+  );
+
+  await tasks([
+    // Stage 4: Generate mandatory steering files (AGENTS.md, product.md,
+    // tech.md). The agent writes them to disk directly.
     {
       title: "Generating mandatory steering files",
-      task: async () =>
-        "Placeholder for step: generate mandatory steering files",
+      task: async () => {
+        await generateMandatoryFiles({
+          analysis,
+          answers: questions.artifact,
+        });
+        return "Mandatory steering files generated";
+      },
     },
     {
       title: "Recommending additional steering files",
