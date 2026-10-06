@@ -74,9 +74,7 @@ async function main() {
   // question at a time), so it must run outside the spinner `tasks` block.
   const questions = await askQuestions(analysis);
   log.info(
-    questions.answered.length > 0
-      ? `Captured ${questions.answered.length} answer(s).`
-      : "No questions needed.",
+    `Captured ${questions.answered.length} answer${questions.answered.length === 1 ? "" : "s"}.`,
   );
 
   // Stages 4 & 5a: non-interactive agent work — generate mandatory files, then

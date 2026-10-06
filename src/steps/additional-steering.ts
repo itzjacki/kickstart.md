@@ -139,8 +139,10 @@ const parseRecommendations = (raw: string): SteeringRecommendations => {
  * Stage 5b (interactive): shows the agent's recommendation with reasons and
  * lets the user adjust the selection. Must run outside a spinner.
  *
- * Returns the confirmed selection (preserving reasons for the generation stage),
- * or `null` if the user cancels.
+ * The selection → confirm pair runs in a loop: answering "no" at the
+ * confirmation returns the user to the multiselect (keeping their current
+ * choice) rather than aborting. Only an explicit cancel (Ctrl+C / Esc) aborts
+ * the whole step and returns `null`.
  */
 export const confirmAdditionalSteeringFiles = async (
   recommendations: SteeringRecommendations,
@@ -157,47 +159,60 @@ export const confirmAdditionalSteeringFiles = async (
   }).join("\n");
   note(summary, "Suggested additional steering files");
 
-  const picked = await multiselect<AdditionalSteeringFile>({
-    message:
-      "Select the additional steering files to generate (space to toggle, enter to continue):",
-    options: ADDITIONAL_STEERING_NAMES.map((file) => ({
-      value: file,
-      label: file,
-      hint: ADDITIONAL_STEERING_FILES[file].hint,
-    })),
-    initialValues: recommended,
-    required: false,
-  });
+  // Start from the agent's recommendation; after a "no" we re-seed the
+  // multiselect with whatever the user had picked so they don't lose edits.
+  let initialValues = recommended;
 
-  if (isCancel(picked)) {
-    cancel("Additional steering selection cancelled.");
-    return null;
+  while (true) {
+    const picked = await multiselect<AdditionalSteeringFile>({
+      message:
+        "Select the additional steering files to generate (space to toggle, enter to continue):",
+      options: ADDITIONAL_STEERING_NAMES.map((file) => ({
+        value: file,
+        label: file,
+        hint: ADDITIONAL_STEERING_FILES[file].hint,
+      })),
+      initialValues,
+      required: false,
+    });
+
+    if (isCancel(picked)) {
+      cancel("Additional steering selection cancelled.");
+      return null;
+    }
+
+    const chosen = new Set(picked);
+    const proceed = await confirm({
+      message:
+        chosen.size > 0
+          ? `Generate ${chosen.size} additional steering file(s): ${[...chosen].join(", ")}?`
+          : "Proceed with no additional steering files?",
+    });
+
+    if (isCancel(proceed)) {
+      cancel("Additional steering selection cancelled.");
+      return null;
+    }
+
+    // A plain "no" means "let me change my selection": loop back to the
+    // multiselect, pre-seeded with the choice the user just made.
+    if (!proceed) {
+      initialValues = [...chosen];
+      continue;
+    }
+
+    // Rebuild the selection from the user's final choice, keeping the agent's
+    // reason for files that remain selected.
+    const result = {} as AdditionalSteeringSelection;
+    for (const file of ADDITIONAL_STEERING_NAMES) {
+      const isChosen = chosen.has(file);
+      result[file] = {
+        recommended: isChosen,
+        reason: isChosen ? recommendations[file].reason : "",
+      };
+    }
+    return result;
   }
-
-  const chosen = new Set(picked);
-  const proceed = await confirm({
-    message:
-      chosen.size > 0
-        ? `Generate ${chosen.size} additional steering file(s): ${[...chosen].join(", ")}?`
-        : "Proceed with no additional steering files?",
-  });
-
-  if (isCancel(proceed) || !proceed) {
-    cancel("Additional steering selection cancelled.");
-    return null;
-  }
-
-  // Rebuild the selection from the user's final choice, keeping the agent's
-  // reason for files that remain selected.
-  const result = {} as AdditionalSteeringSelection;
-  for (const file of ADDITIONAL_STEERING_NAMES) {
-    const isChosen = chosen.has(file);
-    result[file] = {
-      recommended: isChosen,
-      reason: isChosen ? recommendations[file].reason : "",
-    };
-  }
-  return result;
 };
 
 const buildPrompt = (analysis: string, answers: string): string =>
