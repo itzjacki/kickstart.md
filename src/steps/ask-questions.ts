@@ -26,56 +26,18 @@ export interface AskQuestionsResult {
 }
 
 /**
- * Questions step.
+ * First half of the questions step: let the agent decide which plain-language
+ * questions to put to the user — primarily to fill the product/domain gaps the
+ * code can't reveal.
  *
- * Takes the codebase analysis artifact and lets the agent decide which
- * plain-language questions to put to the user — primarily to fill the product/
- * domain gaps the code can't reveal. The questions are then asked interactively,
- * one at a time, and the collected answers are returned as a text artifact for
- * later stages.
+ * This is a non-interactive agent call (it can hang for a while with no visible
+ * output), so the entry point runs it inside a spinner `tasks()` block. It is
+ * kept separate from {@link askQuestions} precisely so the spinner wraps only
+ * this call and never the interactive prompting that follows.
  */
-export const askQuestions = async (
+export const decideQuestions = async (
   analysis: string,
-): Promise<AskQuestionsResult> => {
-  const questions = await decideQuestions(analysis);
-
-  if (questions.length === 0) {
-    return { answered: [], artifact: "" };
-  }
-
-  note(
-    `I have a few questions about your project that I couldn't answer from the code alone.\nI'll ask them one at a time (${questions.length} total). Press enter to skip any you'd rather not answer.`,
-    "A few questions",
-  );
-
-  const answered: AnsweredQuestion[] = [];
-
-  for (const [index, question] of questions.entries()) {
-    const answer = await text({
-      message: `(${index + 1}/${questions.length}) ${question.question}`,
-      placeholder: "Type your answer, or press enter to skip",
-    });
-
-    if (isCancel(answer)) {
-      cancel("Question step cancelled.");
-      throw new Error("Question step cancelled by user.");
-    }
-
-    const trimmed = (answer ?? "").trim();
-    if (trimmed.length > 0) {
-      answered.push({ ...question, answer: trimmed });
-    }
-  }
-
-  return { answered, artifact: buildArtifact(answered) };
-};
-
-/**
- * Asks the agent — given the analysis artifact — to actively decide which
- * questions are worth putting to the user, and returns them as a structured
- * list.
- */
-const decideQuestions = async (analysis: string): Promise<Question[]> => {
+): Promise<Question[]> => {
   const raw = await prompt({
     promptString: buildDecisionPrompt(analysis),
     mockOutput: ASK_QUESTIONS_MOCK,
@@ -112,6 +74,48 @@ const decideQuestions = async (analysis: string): Promise<Question[]> => {
   } catch {
     return [];
   }
+};
+
+/**
+ * Second half of the questions step: ask the pre-decided questions
+ * interactively, one at a time, and return the collected answers as a text
+ * artifact for later stages.
+ *
+ * Interactive (`@clack/prompts` `text`), so this MUST run outside any spinner
+ * `tasks()` block — clack prompts hang inside one.
+ */
+export const askQuestions = async (
+  questions: Question[],
+): Promise<AskQuestionsResult> => {
+  if (questions.length === 0) {
+    return { answered: [], artifact: "" };
+  }
+
+  note(
+    `I have a few questions about your project that I couldn't answer from the code alone.\nI'll ask them one at a time (${questions.length} total). Press enter to skip any you'd rather not answer.`,
+    "A few questions",
+  );
+
+  const answered: AnsweredQuestion[] = [];
+
+  for (const [index, question] of questions.entries()) {
+    const answer = await text({
+      message: `(${index + 1}/${questions.length}) ${question.question}`,
+      placeholder: "Type your answer, or press enter to skip",
+    });
+
+    if (isCancel(answer)) {
+      cancel("Question step cancelled.");
+      throw new Error("Question step cancelled by user.");
+    }
+
+    const trimmed = (answer ?? "").trim();
+    if (trimmed.length > 0) {
+      answered.push({ ...question, answer: trimmed });
+    }
+  }
+
+  return { answered, artifact: buildArtifact(answered) };
 };
 
 /** Renders answered questions into the text artifact later stages consume. */

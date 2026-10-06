@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { parseArgs } from "node:util";
-import { intro, outro, log, tasks, cancel } from "@clack/prompts";
+import { intro, outro, log, tasks, cancel, note } from "@clack/prompts";
 import { analyzeCodebase } from "./steps/codebase-analysis.ts";
-import { askQuestions } from "./steps/ask-questions.ts";
+import { askQuestions, decideQuestions } from "./steps/ask-questions.ts";
 import {
   generateMandatoryFiles,
   MANDATORY_FILES,
@@ -74,14 +74,29 @@ async function main() {
   if (isDebugMode()) {
     log.warn("Running in debug mode — extra diagnostics will be shown.");
   }
-  log.info("Info about the process will go here.");
+  note(
+    [
+      "kickstart.md sets up your repo for AI-assisted development. It runs",
+      "through a few focused steps, asking plain-language questions along the",
+      "way, and writes everything into AGENTS.md and a .kiro/ directory.",
+      "",
+      "What happens next:",
+      "  1. Analyze the codebase to understand your project.",
+      "  2. Ask you a few clarifying questions.",
+      "  3. Generate relevant steering files",
+      "  4. Recommend and install relevant skills.",
+      "  5. Suggest MCP servers you can enable later.",
+    ].join("\n"),
+    "What this does",
+  );
 
   // Stage 2: Analyze codebase. Runs in a spinner; capture its artifact for
   // later stages.
   let analysis = "";
   await tasks([
     {
-      title: "Analyzing codebase",
+      title:
+        "Analyzing codebase. This will probably take a few minutes, depending on the size of the codebase.",
       task: async () => {
         analysis = await analyzeCodebase();
         return "Codebase analyzed";
@@ -89,9 +104,24 @@ async function main() {
     },
   ]);
 
-  // Stage 3: Ask questions. This step is interactive (it prompts the user one
-  // question at a time), so it must run outside the spinner `tasks` block.
-  const questions = await askQuestions(analysis);
+  // Stage 3: Ask questions. Split in two: deciding which questions to ask is a
+  // non-interactive agent call (can hang with no output), so it runs in a
+  // spinner; the actual prompting is interactive and must run outside the
+  // spinner `tasks` block (clack prompts hang inside one).
+  let decidedQuestions: Awaited<ReturnType<typeof decideQuestions>> = [];
+  await tasks([
+    {
+      title: "Deciding what to ask you",
+      task: async () => {
+        decidedQuestions = await decideQuestions(analysis);
+        return decidedQuestions.length > 0
+          ? `Prepared ${decidedQuestions.length} question${decidedQuestions.length === 1 ? "" : "s"}`
+          : "No questions needed";
+      },
+    },
+  ]);
+
+  const questions = await askQuestions(decidedQuestions);
   log.info(
     `Captured ${questions.answered.length} answer${questions.answered.length === 1 ? "" : "s"}.`,
   );
@@ -114,7 +144,7 @@ async function main() {
     },
     // Stage 5a: Recommend additional (situational) steering files.
     {
-      title: "Recommending additional steering files",
+      title: "Deciding which steering files to recommend",
       task: async () => {
         steeringRecommendations = await recommendAdditionalSteeringFiles({
           analysis,
@@ -171,7 +201,8 @@ async function main() {
   let suggestedSkills!: SkillRecommendations;
   await tasks([
     {
-      title: "Recommending skills",
+      title:
+        "Deciding which skills to recommend. Skills give the AI reusable, step-by-step instructions for specific tasks in your project.",
       task: async () => {
         suggestedSkills = await selectSkills({
           projectContext: analysis,
