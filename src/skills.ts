@@ -24,7 +24,7 @@ export const SKILLS = {
     hint: "find architecture improvement opportunities",
   },
 
-  "brainstorming": {
+  brainstorming: {
     repository: "obra/superpowers",
     hint: "explore requirements and solutions before implementation",
   },
@@ -36,12 +36,12 @@ export const SKILLS = {
     repository: "mattpocock/skills",
     hint: "model the domain, entities, and relationships before coding",
   },
-  "implement": {
+  implement: {
     repository: "mattpocock/skills",
     hint: "execute an implementation plan systematically",
   },
 
-  "tdd": {
+  tdd: {
     repository: "mattpocock/skills",
     hint: "develop features using behavior-focused test-driven development",
   },

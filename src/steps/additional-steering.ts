@@ -237,9 +237,8 @@ one. Base your decision on the analysis (repo facts) and the user's answers
 ### Candidate files and when to include each
 
 ${ADDITIONAL_STEERING_NAMES.map(
-    (file) =>
-      `- \`${file}\`: ${ADDITIONAL_STEERING_FILES[file].whenToInclude}`,
-  ).join("\n")}
+  (file) => `- \`${file}\`: ${ADDITIONAL_STEERING_FILES[file].whenToInclude}`,
+).join("\n")}
 
 ### Output format
 
@@ -248,15 +247,15 @@ boolean \`recommended\` and a terse \`reason\` (one clause: cite the evidence th
 justifies including it, or why it is being skipped). Example shape:
 
 ${JSON.stringify(
-    Object.fromEntries(
-      ADDITIONAL_STEERING_NAMES.map((file) => [
-        file,
-        { recommended: false, reason: "<terse reason>" },
-      ]),
-    ),
-    null,
-    2,
-  )}
+  Object.fromEntries(
+    ADDITIONAL_STEERING_NAMES.map((file) => [
+      file,
+      { recommended: false, reason: "<terse reason>" },
+    ]),
+  ),
+  null,
+  2,
+)}
 
 ### Analysis artifact
 

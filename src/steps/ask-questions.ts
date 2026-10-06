@@ -65,7 +65,8 @@ export const decideQuestions = async (
       )
       .map((q, i) => {
         const base: Question = {
-          id: typeof q.id === "string" && q.id.trim() ? q.id.trim() : `q${i + 1}`,
+          id:
+            typeof q.id === "string" && q.id.trim() ? q.id.trim() : `q${i + 1}`,
           question: q.question.trim(),
         };
         const why = typeof q.why === "string" ? q.why.trim() : "";

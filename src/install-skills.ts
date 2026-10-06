@@ -45,15 +45,7 @@ export async function installSkills(
     try {
       await execFileAsync(
         SKILLS_BIN,
-        [
-            "add",
-            source,
-            "--skill",
-            skill,
-            "--agent",
-            "kiro-cli",
-            "--yes",
-        ],
+        ["add", source, "--skill", skill, "--agent", "kiro-cli", "--yes"],
         {
           encoding: "utf-8",
           maxBuffer: 10 * 1024 * 1024,
