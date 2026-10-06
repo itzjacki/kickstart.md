@@ -198,7 +198,7 @@ async function main() {
   ]);
 
   // Stage 10: Select MCPs
-  await selectMCPs(analysis + questions.artifact)
+  const {mcpsAdded} = await selectMCPs(analysis + questions.artifact)
 
   // Stage 11: Summarize what the run produced. MCP counts are
   // placeholders until those stages are wired up (currently always 0).
@@ -206,7 +206,7 @@ async function main() {
     mandatoryFiles: MANDATORY_FILES,
     additionalFiles: selectedAdditionalFiles,
     skillsInstalled: selectedSkills.length,
-    mcpServersAdded: 0,
+    mcpServersAdded: mcpsAdded,
   });
   outro("Kickstart complete!");
 }

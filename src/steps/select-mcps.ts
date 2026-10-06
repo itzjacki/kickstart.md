@@ -1,5 +1,5 @@
 import {log, multiselect, spinner, tasks} from '@clack/prompts'
-import {execFileAsync} from "../tools.ts";
+import {execFileAsync, kiroTrace} from "../tools.ts";
 import type {PromiseWithChild} from "node:child_process";
 import {prompt} from "../prompt.ts";
 
@@ -46,7 +46,7 @@ ${aiContext.trim() || "(no ai context provided)"}
 `.trim();
 }
 
-export const selectMCPs = async (aiContext: string) => {
+export const selectMCPs = async (aiContext: string): Promise<{mcpsAdded: number}> => {
     const mcpCollection: MCP[] = [
         {
             name: 'atlassian',
@@ -66,7 +66,7 @@ export const selectMCPs = async (aiContext: string) => {
         task: async () => {
             const aiRecommendedMCPs = await prompt({promptString: getAiRecommendationPrompt(aiContext, mcpCollection), mockOutput})
 
-            const json = aiRecommendedMCPs.match(/\[\{.*\}\]/)
+            const json = aiRecommendedMCPs.match(/\[[\s\S]*{[\s\S]*}[\s\S]*]/)
             if (!json) return
 
             log.info(json[0])
@@ -83,7 +83,7 @@ export const selectMCPs = async (aiContext: string) => {
         required: false
     });
 
-    if (typeof mcps === 'symbol') return
+    if (typeof mcps === 'symbol') return {mcpsAdded: 0}
 
     await tasks([
         {
@@ -97,6 +97,8 @@ export const selectMCPs = async (aiContext: string) => {
                     deferred.push(execFileAsync('kiro-cli', ['mcp', 'add', '--name', mcp.name, '--url', mcp.url, '--scope', mcp.scope, '--force'], {encoding: "utf-8"}))
                 })
                 const result = await Promise.allSettled(deferred)
+                result.forEach(r => r.status === 'fulfilled' ? kiroTrace(r.value) : kiroTrace(r.reason))
+
                 const error = result.filter(r => r.status === 'rejected')
                 const success = result.filter(r => r.status === 'fulfilled').map(s => s.value.stderr.trim())
 
@@ -105,6 +107,9 @@ export const selectMCPs = async (aiContext: string) => {
             }
         }
     ])
+
+    return {mcpsAdded: mcps.length}
 }
 
-const mockOutput = "[{\"name\":\"github\",\"url\":\"https://github.com/github/github-mcp-server\",\"scope\":\"workspace\",\"description\":\"GitHub. Manage issues, pull requests, repos, and code search via GitHub API.\"}]"
+// const mockOutput = "[{\"name\":\"github\",\"url\":\"https://github.com/github/github-mcp-server\",\"scope\":\"workspace\",\"description\":\"GitHub. Manage issues, pull requests, repos, and code search via GitHub API.\"}]"
+const mockOutput = undefined

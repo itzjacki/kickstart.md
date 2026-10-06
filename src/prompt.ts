@@ -1,7 +1,7 @@
 import { createPromptText } from "./assemble-prompt.ts";
 import { isMockMode } from "./mock.ts";
 import { isDebugMode } from "./debug.ts";
-import {execFileAsync} from "./tools.ts";
+import {execFileAsync, kiroTrace} from "./tools.ts";
 import { log } from "@clack/prompts";
 
 const defaultAllowedKiroTools = ["read", "grep", "glob", "code"];
@@ -51,6 +51,7 @@ export const prompt = async ({
   ];
 
   const result = await execFileAsync("kiro-cli", args, { encoding: "utf-8" });
+  await kiroTrace(result)
 
   // In debug mode, surface the agent's stderr (its error/trace output). This
   // MUST go through clack's `log` rather than `console.*`, otherwise clack can
