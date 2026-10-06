@@ -24,6 +24,7 @@ import { enableDebugMode, isDebugMode } from "./debug.ts";
 import { printHelp } from "./help.ts";
 import { installSkills } from "./install-skills.ts";
 import { showSummary } from "./summary.ts";
+import {selectMCPs} from "./steps/select-mcps.ts";
 
 async function main() {
   const { values } = parseArgs({
@@ -85,6 +86,9 @@ async function main() {
   log.info(
     `Captured ${questions.answered.length} answer${questions.answered.length === 1 ? "" : "s"}.`,
   );
+
+  // Stage X: Select MCPs
+  await selectMCPs()
 
   // Stages 4 & 5a: non-interactive agent work — generate mandatory files, then
   // compute the additional-steering recommendation. Both run in the spinner.
