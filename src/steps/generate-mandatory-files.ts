@@ -57,6 +57,20 @@ files (no \`structure.md\`, no optional steering files, no skills) — those bel
 to later stages. Write the files and then stop; output only a one-line
 confirmation per file (no file contents echoed back, no commentary).
 
+### Reconciling with existing files
+
+If the user-answers artifact states a preference for how to handle pre-existing
+AI setup (an existing \`AGENTS.md\`, \`.kiro/\` steering, or similar), honor it:
+
+- "replace": overwrite the existing file(s) with the new content.
+- "merge"/"combine": read the existing file first and fold its still-relevant
+  content into the new file rather than discarding it.
+- "keep"/"leave untouched" for a specific file: do NOT write that file; skip it
+  and note it in your confirmation.
+
+If the answers express no such preference, write the three files normally
+(overwriting if they happen to exist).
+
 ### Guiding principle: lean beats comprehensive
 
 These files are loaded into the agent's context on EVERY turn, so every line has

@@ -180,12 +180,24 @@ for this particular repo (add those). Rephrase freely into plain language.
   purpose, users, or domain as \`unknown\` (or only weakly evidenced), you MUST
   ask whatever plain-language questions are needed to fill that gap. Never guess
   the product story to avoid asking.
+- Reconciling existing AI setup: if the analysis shows the repo ALREADY has AI
+  steering docs, skills, or related config (e.g. an existing \`AGENTS.md\` /
+  \`CLAUDE.md\`, a \`.kiro/\` directory, rules files, or similar — see the
+  analysis's existing-docs/AI-tooling findings), you MUST ask the user how they
+  want the new setup to coexist with it: replace the old entirely, merge the two,
+  or leave specific existing files untouched. Do not silently overwrite or
+  duplicate the user's existing work. Only ask this when such pre-existing setup
+  is actually detected; skip it for a repo with no prior AI tooling.
 
 ### Writing style for questions
 
 - Plain language only. The user knows their project but may know nothing about AI
   tooling, steering docs, or this tool. Never use jargon like "steering",
-  "artifact", "repo analysis", or tool names.
+  "artifact", "repo analysis", or tool names. (Exception: the reconciliation
+  question above may name concrete existing files/directories the user already
+  has, e.g. "your existing \`AGENTS.md\`", since the user needs to know what is
+  being referred to — but still phrase the choice itself plainly, e.g. "keep,
+  replace, or combine".)
 - One idea per question — these are asked one at a time, so keep each self-
   contained and answerable in a sentence or two.
 - Phrase as direct questions a non-technical stakeholder could answer.
