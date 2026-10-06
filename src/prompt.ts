@@ -36,8 +36,8 @@ export const prompt = async ({
 }: Prompt): Promise<string> => {
   // In mock mode, skip the real agent call entirely and return the pre-made
   // example. This keeps the full orchestrator flow runnable without kiro-cli.
-  if (isMockMode()) {
-    return mockOutput ?? "(mock mode: no mockOutput provided for this step)";
+  if (isMockMode() && mockOutput !== undefined) {
+    return mockOutput;
   }
 
   const allowedTools = Array.from(
