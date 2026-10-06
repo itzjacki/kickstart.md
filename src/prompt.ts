@@ -45,7 +45,7 @@ export const prompt = async ({
     "chat",
     "--no-interactive",
     `--trust-tools=${allowedTools.join(",")}`,
-    createPromptText(promptString),
+    createPromptText(promptString, allowedTools),
   ];
 
   const result = await execFileAsync("kiro-cli", args, { encoding: "utf-8" });

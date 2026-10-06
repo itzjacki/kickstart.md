@@ -1,18 +1,18 @@
 /**
- * Wraps a prompt in system prompt info used in the kickstart.md cli
- * @param promptText prompt containing instructions
+ * Wraps a prompt in the kickstart.md system prompt, and tells the agent exactly
+ * which tools it may use for this call.
+ *
+ * @param promptText prompt containing the task instructions
+ * @param allowedTools the tools trusted for this call (the agent's effective,
+ *   usable toolset — any other tool would hang the headless session awaiting
+ *   approval)
  */
-export const createPromptText = (promptText: string) => {
+export const createPromptText = (
+  promptText: string,
+  allowedTools: readonly string[] = [],
+) => {
   return `
   ===SYSTEM PROMPT===
-  ${systemPrompt}
-  
-  ===USER PROMPT===
-  ${promptText}
-  `;
-};
-
-const systemPrompt = `
   You are the engine behind kickstart.md, a CLI tool that bootstraps AI steering
   docs and tooling (an AGENTS.md file and a .kiro/ directory of steering files and
   skills) for a software project.
@@ -32,4 +32,14 @@ const systemPrompt = `
   - Base your work only on the provided codebase and context. Do not invent facts
     about the project; if something cannot be determined, say so in the form the
     task specifies.
-`;
+
+  ===AVAILABLE TOOLS===
+  For this call you may use ONLY these tools: ${allowedTools.join(", ")}.
+  Do not attempt any other tool — no other tool is available, and trying one will
+  stall this run. If a task cannot be completed with these, say so in the form the
+  task specifies rather than reaching for an unavailable tool.
+
+  ===USER PROMPT===
+  ${promptText}
+  `;
+};
