@@ -3,29 +3,27 @@ import { prompt } from "./prompt.ts";
 import { SELECT_SKILLS_MOCK } from "./mock.ts";
 
 export const SKILLS = {
-  "update-kickstart": {
-    hint: "update steering docs when kickstart versions change",
-  },
-  "update-steering": {
-    hint: "keep steering docs in sync after code changes",
-  },
   "skill-creator": {
+    repository: "anthropics/skills",
     hint: "create and iterate on new skills",
   },
   "grill-me": {
+    repository: "mattpocock/skills",
     hint: "stress-test plans and designs",
   },
   "find-skills": {
+    repository: "vercel-labs/skills",
     hint: "discover and install new skills",
   },
-  "prototype": {
+  prototype: {
+    repository: "emilkowalski/skills",
     hint: "build throwaway prototypes to explore designs",
   },
   "improve-codebase-architecture": {
+    repository: "mattpocock/skills",
     hint: "find architecture improvement opportunities",
   },
 } as const;
-
 
 export type Skill = keyof typeof SKILLS;
 
@@ -90,15 +88,16 @@ ${JSON.stringify(template, null, 2)}
 }
 
 export async function confirmSkillSelection(
-  selection: SkillSelection
-): Promise<SkillSelection | null> {
+  selection: SkillSelection,
+): Promise<Skill[] | null> {
   // preselect skills the LLM marked `true`
   const picked = await multiselect<Skill>({
-    message: "Select the skills to install (space to toggle, enter to continue):",
+    message:
+      "Select the skills to install (space to toggle, enter to continue):",
     options: SKILL_NAMES.map((skill) => ({
       value: skill,
       label: skill,
-      hint: SKILLS[skill].hint
+      hint: SKILLS[skill].hint,
     })),
     initialValues: SKILL_NAMES.filter((skill) => selection[skill]),
     required: false,
@@ -123,10 +122,9 @@ export async function confirmSkillSelection(
     return null;
   }
 
-  // rebuild the whole selection obj from the user's final choice
-  const result = {} as SkillSelection;
-  for (const skill of SKILL_NAMES) {
-    result[skill] = chosen.has(skill);
-  }
-  return result;
+  return [...chosen];
+}
+
+export function getSelectedSkills(selection: SkillSelection): Skill[] {
+  return SKILL_NAMES.filter((skill) => selection[skill]);
 }

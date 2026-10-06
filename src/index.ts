@@ -14,10 +14,15 @@ import {
   type SteeringRecommendations,
   type AdditionalSteeringSelection,
 } from "./steps/additional-steering.ts";
-import { selectSkills } from "./skills.ts";
+import {
+  confirmSkillSelection,
+  selectSkills,
+  type SkillSelection,
+} from "./skills.ts";
 import { enableMockMode, isMockMode } from "./mock.ts";
 import { enableDebugMode, isDebugMode } from "./debug.ts";
 import { printHelp } from "./help.ts";
+import { installSkills } from "./install-skills.ts";
 import { showSummary } from "./summary.ts";
 
 async function main() {
@@ -140,14 +145,50 @@ async function main() {
       task: async () =>
         "Placeholder for step: generate additional steering files",
     },
+  ]);
+
+  // Stage 7: Recommend skills
+  let suggestedSkills: SkillSelection;
+  await tasks([
     {
       title: "Recommending skills",
-      task: async () => "Placeholder for step: recommend skills",
+      task: async () => {
+        suggestedSkills = await selectSkills({
+          projectContext: analysis,
+          userInput: questions.artifact,
+        });
+
+        return "Skills recommended";
+      },
     },
+  ]);
+
+  // Stage 8: Confirm skills
+  const selectedSkills = await confirmSkillSelection(suggestedSkills);
+
+  if (selectedSkills === null) {
+    cancel("Kickstart cancelled.");
+    process.exitCode = 1;
+    return;
+  }
+
+  // Stage 9: Install skills
+  await tasks([
     {
       title: "Installing skills",
-      task: async () => "Placeholder for step: install skills",
+      task: async () => {
+        if (selectedSkills.length === 0) {
+          return "No skills selected";
+        }
+
+        await installSkills(selectedSkills);
+
+        return `Installed ${selectedSkills.length} skill(s)`;
+      },
     },
+  ]);
+
+  await tasks([
     {
       title: "Recommending MCP servers",
       task: async () => "Placeholder for step: recommend MCP servers",
