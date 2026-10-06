@@ -72,7 +72,8 @@ export const selectMCPs = async (
   ];
   await tasks([
     {
-      title: "Finding suitable MCPs for your project",
+      title:
+        "Finding suitable MCPs for your project. MCP servers connect the AI to external tools and data sources, like your docs, APIs, or databases.",
       task: async () => {
         const aiRecommendedMCPs = await prompt({
           promptString: getAiRecommendationPrompt(aiContext, mcpCollection),
@@ -89,7 +90,7 @@ export const selectMCPs = async (
     },
   ]);
   const mcps = await multiselect({
-    message: "Recommended MCPs",
+    message: "Select MCPs to add:",
     options: mcpCollection.map((m) => ({
       value: m.name,
       label: m.description,

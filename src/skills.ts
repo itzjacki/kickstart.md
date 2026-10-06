@@ -232,8 +232,7 @@ export async function confirmSkillSelection(
 
   while (true) {
     const picked = await multiselect<Skill>({
-      message:
-        "Select the skills to install (space to toggle, enter to continue):",
+      message: "Select the skills to install:",
       options: SKILL_NAMES.map((skill) => ({
         value: skill,
         label: skill,

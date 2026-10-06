@@ -165,8 +165,7 @@ export const confirmAdditionalSteeringFiles = async (
 
   while (true) {
     const picked = await multiselect<AdditionalSteeringFile>({
-      message:
-        "Select the additional steering files to generate (space to toggle, enter to continue):",
+      message: "Select the additional steering files to generate:",
       options: ADDITIONAL_STEERING_NAMES.map((file) => ({
         value: file,
         label: file,
