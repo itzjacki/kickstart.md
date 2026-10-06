@@ -122,7 +122,6 @@ export const ASK_QUESTIONS_MOCK = JSON.stringify(
 /** Fixture for the skill-selection step (the JSON the step parses). */
 export const SELECT_SKILLS_MOCK = JSON.stringify(
   {
-    "update-kickstart": true,
     "update-steering": true,
     "skill-creator": true,
     "grill-me": false,

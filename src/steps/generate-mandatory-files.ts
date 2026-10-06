@@ -111,7 +111,7 @@ this structure:
 \`\`\`markdown
 # AGENTS.md
 
-<!-- kickstart ${KICKSTART_VERSION} -->
+<!-- kickstart version: ${KICKSTART_VERSION} -->
 
 ## Project overview
 
@@ -163,7 +163,7 @@ product story.
 \`\`\`markdown
 # Product
 
-<!-- kickstart ${KICKSTART_VERSION} -->
+<!-- kickstart version: ${KICKSTART_VERSION} -->
 
 ## What this project is
 
@@ -208,7 +208,7 @@ entirely rather than reverse-engineering a north star from the repo.
 \`\`\`markdown
 # Technology Stack
 
-<!-- kickstart ${KICKSTART_VERSION} -->
+<!-- kickstart version: ${KICKSTART_VERSION} -->
 
 ## Languages & runtimes
 

@@ -144,7 +144,7 @@ async function main() {
   ]);
 
   // Stage 7: Recommend skills
-  let suggestedSkills: SkillSelection;
+  let suggestedSkills!: SkillSelection;
   await tasks([
     {
       title: "Recommending skills",

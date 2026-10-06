@@ -24,12 +24,14 @@ Run locally: `node --experimental-strip-types ./src/index.ts`. Stage status: `TO
 ## Keep in sync
 
 Record decisions in this file as they're made. Keep `TODO.md` current. A CLI flag
-change in `src/index.ts` → update `src/help.ts` in the same change.
+change in `src/index.ts` → update `src/help.ts` in the same change. For release
+changes, keep `package.json` scripts/configuration and this guidance in sync.
 
 ## Boundaries
 
 - **Never touch** (human-only unless explicitly asked): root `README.md`, `index.html`, `styles.css`.
-- **Ask first**: retiring the legacy root `kickstart.md`; changing the versioning or `CHANGELOG.md` format.
+- **Ask first**: retiring the legacy root `kickstart.md`; changing the package version or release process.
+- **Release command**: `npm run release -- patch|minor|major` uses release-it to typecheck, bump the package version, push the tag, create the GitHub Release, and publish to npm. This performs external/irreversible actions, so never run it without an explicit request. GitHub CLI is not required; release-it uses the GitHub API.
 
 ## What the tool generates (design principle)
 

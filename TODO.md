@@ -37,6 +37,8 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 - [x] Scope `--trust-tools` per call (read-only structured tools by default; no `shell`)
 - [x] Mock mode — every LLM step skippable via `--mock`/`-m` or `KICKSTART_MOCK`; `prompt()` returns per-step fixtures from `src/mock.ts` (dev/testing without `kiro-cli`)
 - [x] Debug mode — `--debug`/`-d` or `KICKSTART_DEBUG` (`src/debug.ts`); surfaces each `kiro-cli` call's `stderr` from `prompt()` via clack `log.*` (never raw `console.*`)
+- [x] Release workflow — pinned `release-it` config in `package.json`; `npm run release -- patch|minor|major` typechecks, bumps, tags, creates a GitHub Release, and publishes to npm. Do not execute without explicit release approval.
+- [x] Release workflow — pinned `release-it` config in `package.json`; `npm run release -- patch|minor|major` typechecks, bumps, tags, creates a GitHub Release, and publishes to npm. Do not execute without explicit release approval.
 - [ ] Error handling / retry for individual stages
 - [ ] Decide the fate of the legacy `kickstart.md` prompt once the script reaches parity (retire or keep as fallback)
 
@@ -72,7 +74,6 @@ Out of scope: tone, workflow preferences, prescriptive style guides.
 - `AGENTS.md` — project context + agent constraints (always loaded by Kiro)
 - `.kiro/steering/product.md` — what the project is, target users, business objectives
 - `.kiro/steering/tech.md` — frameworks, libraries, dev tools, build/test/lint commands
-- `.kiro/skills/update-kickstart/SKILL.md` — skill to update steering docs when kickstart versions change
 - `.kiro/skills/` — additional skills sourced from established, well-tested collections (not invented from scratch). Some will always be included based on the kickstart workflow; others conditional on what's detected in the repo.
 
 ### Conditional (only if relevant)
@@ -87,9 +88,7 @@ Out of scope: tone, workflow preferences, prescriptive style guides.
 - [x] Entry-point prompt (the main instruction set an AI agent follows)
 - [x] Target repo analysis logic (what to look for and how)
 - [x] Artifact generation rules (what to produce, where to put it, what format)
-- [x] Versioning scheme — stamp version into generated artifacts
-- [x] CHANGELOG.md — LLM-actionable changelog tracking what changed between versions
-- [x] Update skill — separate skill that reads target's current version, diffs changelog, applies changes
+- [x] Semantic versioning — `src/version.ts` statically sources the version from `package.json`; generated artifacts are stamped with that version
 - [x] Templates structure:
   - `templates/skills/README.md` — catalog (what each skill does, when to include, source/attribution, customization notes)
   - `templates/skills/*/SKILL.md` — bundled skill templates
@@ -107,7 +106,6 @@ Out of scope: tone, workflow preferences, prescriptive style guides.
 
 ## Skills for this repo (not templates)
 
-- [ ] `release-version` skill — creates a new kickstart version: looks at the diff since last version, generates a changelog entry following the same specification that `update-kickstart` uses to parse it. Ensures changelog format is consistent between producer and consumer.
 - [ ] `write-skill` skill — assists in writing new skill templates (proper frontmatter, structure, catalog entry, etc.)
 
 ## Stretch goals

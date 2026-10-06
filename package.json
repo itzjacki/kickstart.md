@@ -24,7 +24,9 @@
     "kickstart.md": "./src/index.ts"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "tsc --noEmit",
+    "release": "release-it"
   },
   "engines": {
     "node": ">=24"
@@ -35,6 +37,25 @@
   "devDependencies": {
     "@types/node": "^26.6.4",
     "prettier": "^3.9.9",
+    "release-it": "21.1.0",
     "typescript": "^6.0.3"
+  },
+  "release-it": {
+    "$schema": "https://unpkg.com/release-it@21/schema/release-it.json",
+    "git": {
+      "commit": true,
+      "tag": true,
+      "push": true
+    },
+    "github": {
+      "release": true,
+      "autoGenerate": true
+    },
+    "npm": {
+      "publish": true
+    },
+    "hooks": {
+      "before:init": "npm run typecheck"
+    }
   }
 }
