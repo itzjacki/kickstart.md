@@ -190,10 +190,6 @@ export const SELECT_SKILLS_MOCK = JSON.stringify(
       recommended: false,
       reason: "Git guardrails already covered in AGENTS.md",
     },
-    "resolving-merge-conflicts": {
-      recommended: false,
-      reason: "no evidence of frequent merge conflicts",
-    },
     "frontend-design": {
       recommended: false,
       reason: "no frontend surface",

@@ -74,10 +74,6 @@ export const SKILLS = {
     repository: "mattpocock/skills",
     hint: "protect repositories from unsafe AI-driven Git operations",
   },
-  "resolving-merge-conflicts": {
-    repository: "mattpocock/skills",
-    hint: "resolve Git merge conflicts safely and systematically",
-  },
 
   "frontend-design": {
     repository: "anthropics/skills",

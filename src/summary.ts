@@ -12,8 +12,8 @@ export interface RunSummary {
   mandatoryFiles: readonly string[];
   /** Additional situational steering files the user chose to generate. */
   additionalFiles: readonly string[];
-  /** How many skills were installed. */
-  skillsInstalled: number;
+  /** Names of the skills that were installed. */
+  skillsInstalled: readonly string[];
   /** How many MCP servers were added (as disabled suggestions). */
   mcpServersAdded: number;
 }
@@ -48,7 +48,9 @@ export const renderSummary = ({
     `Steering files: ${countLabel(steeringFiles.length, "file")}`,
     ...steeringFiles.map((file) => `  • ${file}`),
     "",
-    `Skills installed: ${skillsInstalled}`,
+    `Skills installed: ${countLabel(skillsInstalled.length, "skill")}`,
+    ...skillsInstalled.map((skill) => `  • ${skill}`),
+    "",
     `MCP servers added: ${mcpServersAdded}`,
   ];
 
