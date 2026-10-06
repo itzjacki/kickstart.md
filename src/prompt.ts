@@ -1,9 +1,6 @@
-import { execFile } from "node:child_process";
-import { promisify } from "util";
 import { createPromptText } from "./assemble-prompt.ts";
 import { isMockMode } from "./mock.ts";
-
-const execFileAsync = promisify(execFile);
+import {execFileAsync} from "./tools.ts";
 
 const defaultAllowedKiroTools = ["read", "grep", "glob", "code"];
 
