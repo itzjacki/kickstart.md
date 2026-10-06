@@ -28,6 +28,7 @@ ${JSON.stringify(excludedMCPs)}
 
 Return ONLY a list of MCPs corresponding to this format. Do not add any additional
 information or text. No reasoning necessary. Your output is structured data only.
+Do not add line breaks or spaces inside the JSON.
 
 interface MCP {
     name: string
@@ -36,6 +37,9 @@ interface MCP {
     description: string
 }
 
+example format: 
+[{"name": "actual-name","url": "actual-url","scope": "actual-scope","description": "actual-description"}]
+ 
 Add a short description to each MCP, stating the main purpose of the service behind. No more than 100 chars.
 Set "scope" property to "workspace" for each MCP you recommend. 
 
@@ -66,7 +70,7 @@ export const selectMCPs = async (aiContext: string): Promise<{mcpsAdded: number}
         task: async () => {
             const aiRecommendedMCPs = await prompt({promptString: getAiRecommendationPrompt(aiContext, mcpCollection), mockOutput})
 
-            const json = aiRecommendedMCPs.match(/\[[\s\S]*{[\s\S]*}[\s\S]*]/)
+            const json = aiRecommendedMCPs.match(/\[{[\s\S]*}]/)
             if (!json) return
 
             log.info(json[0])
@@ -111,5 +115,4 @@ export const selectMCPs = async (aiContext: string): Promise<{mcpsAdded: number}
     return {mcpsAdded: mcps.length}
 }
 
-// const mockOutput = "[{\"name\":\"github\",\"url\":\"https://github.com/github/github-mcp-server\",\"scope\":\"workspace\",\"description\":\"GitHub. Manage issues, pull requests, repos, and code search via GitHub API.\"}]"
-const mockOutput = undefined
+const mockOutput = "[{\"name\":\"github\",\"url\":\"https://github.com/github/github-mcp-server\",\"scope\":\"workspace\",\"description\":\"GitHub. Manage issues, pull requests, repos, and code search via GitHub API.\"}]"
