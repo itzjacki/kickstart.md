@@ -192,7 +192,9 @@ async function main() {
     return;
   }
 
-  // Stage 9: Install skills
+  // Stage 9: Install skills. Each skill installs independently; a failure on
+  // one is collected rather than aborting the whole step.
+  let installedSkills: string[] = [];
   await tasks([
     {
       title: "Installing skills",
@@ -201,9 +203,17 @@ async function main() {
           return "No skills selected";
         }
 
-        await installSkills(selectedSkills);
+        const { installed, failed } = await installSkills(selectedSkills);
+        installedSkills = installed;
 
-        return `Installed ${selectedSkills.length} skill(s)`;
+        if (failed.length > 0) {
+          const detail = failed
+            .map(({ skill, error }) => `${skill} (${error})`)
+            .join(", ");
+          log.warn(`Failed to install ${failed.length} skill(s): ${detail}`);
+        }
+
+        return `Installed ${installed.length} of ${selectedSkills.length} skill(s)`;
       },
     },
   ]);
@@ -211,12 +221,11 @@ async function main() {
   // Stage 10: Select MCPs
   const { mcpsAdded } = await selectMCPs(analysis + questions.artifact);
 
-  // Stage 11: Summarize what the run produced. MCP counts are
-  // placeholders until those stages are wired up (currently always 0).
+  // Stage 11: Summarize what the run produced
   showSummary({
     mandatoryFiles: MANDATORY_FILES,
     additionalFiles: selectedAdditionalFiles,
-    skillsInstalled: selectedSkills.length,
+    skillsInstalled: installedSkills,
     mcpServersAdded: mcpsAdded,
   });
   outro("Kickstart complete!");
