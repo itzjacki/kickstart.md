@@ -5,8 +5,16 @@ repo. It's a TypeScript/Node CLI (`src/`) that drives the process via scoped
 `kiro-cli chat --no-interactive` calls, one per pipeline stage. (Legacy
 single-prompt version still lives at root `kickstart.md` during the rewrite.)
 
-**Verify any change with `npx tsc --noEmit`** (the only build step; no tests yet).
+**Verify any change with `npx tsc --noEmit`** (typecheck only; no tests yet).
 Run locally: `node --experimental-strip-types ./src/index.ts`. Stage status: `TODO.md`.
+
+**Published artifact is compiled JS, not stripped TS.** Node's TS stripping does
+not work for installed `node_modules`, so the package ships `dist/` (emitted by
+`npm run build` = `clean && tsc`) and `bin` points at `dist/index.js`. The `files`
+field publishes only `dist/`; `package.json` is always included (needed at runtime
+by `version.js`, which imports `../package.json` — resolving from `dist/` to the
+package root). The build runs automatically on release (`after:bump` hook) and as
+a `prepublishOnly` safety net; `dist/` is gitignored.
 
 ## Things you'll get wrong without knowing
 

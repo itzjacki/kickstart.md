@@ -21,11 +21,17 @@
   "author": "Team Summit",
   "type": "module",
   "bin": {
-    "kickstart.md": "./src/index.ts"
+    "kickstart.md": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
+    "prepublishOnly": "npm run build",
     "release": "release-it"
   },
   "engines": {
@@ -56,7 +62,8 @@
       "publish": true
     },
     "hooks": {
-      "before:init": "npm run typecheck"
+      "before:init": "npm run typecheck",
+      "after:bump": "npm run build"
     }
   }
 }
