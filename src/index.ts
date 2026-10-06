@@ -9,11 +9,13 @@ import {
   MANDATORY_FILES,
 } from "./steps/generate-mandatory-files.ts";
 import {
+  ADDITIONAL_STEERING_NAMES,
   recommendAdditionalSteeringFiles,
   confirmAdditionalSteeringFiles,
   type SteeringRecommendations,
-  type AdditionalSteeringSelection,
+  type AdditionalSteeringFile,
 } from "./steps/additional-steering.ts";
+import { generateAdditionalFiles } from "./steps/generate-additional-files.ts";
 import {
   confirmSkillSelection,
   selectSkills,
@@ -94,7 +96,6 @@ async function main() {
     `Captured ${questions.answered.length} answer${questions.answered.length === 1 ? "" : "s"}.`,
   );
 
-
   // Stages 4 & 5a: non-interactive agent work — generate mandatory files, then
   // compute the additional-steering recommendation. Both run in the spinner.
   let steeringRecommendations: SteeringRecommendations | undefined;
@@ -126,10 +127,9 @@ async function main() {
 
   // Stage 5b: Confirm/adjust the additional-steering selection. Interactive, so
   // it runs outside the spinner `tasks` block.
-  let additionalSteering: AdditionalSteeringSelection | null = null;
-  let selectedAdditionalFiles: string[] = [];
+  let selectedAdditionalFiles: AdditionalSteeringFile[] = [];
   if (steeringRecommendations) {
-    additionalSteering = await confirmAdditionalSteeringFiles(
+    const additionalSteering = await confirmAdditionalSteeringFiles(
       steeringRecommendations,
     );
     if (additionalSteering === null) {
@@ -138,9 +138,9 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    selectedAdditionalFiles = Object.entries(additionalSteering)
-      .filter(([, rec]) => rec.recommended)
-      .map(([file]) => file);
+    selectedAdditionalFiles = ADDITIONAL_STEERING_NAMES.filter(
+      (file) => additionalSteering[file].recommended,
+    );
     log.info(
       selectedAdditionalFiles.length > 0
         ? `Additional steering files to generate: ${selectedAdditionalFiles.join(", ")}.`
@@ -151,8 +151,19 @@ async function main() {
   await tasks([
     {
       title: "Generating additional steering files",
-      task: async () =>
-        "Placeholder for step: generate additional steering files",
+      task: async () => {
+        if (selectedAdditionalFiles.length === 0) {
+          return "No additional steering files selected";
+        }
+
+        await generateAdditionalFiles({
+          analysis,
+          answers: questions.artifact,
+          selectedFiles: selectedAdditionalFiles,
+        });
+
+        return `Generated ${selectedAdditionalFiles.length} additional steering file(s)`;
+      },
     },
   ]);
 
@@ -198,7 +209,7 @@ async function main() {
   ]);
 
   // Stage 10: Select MCPs
-  const {mcpsAdded} = await selectMCPs(analysis + questions.artifact)
+  const { mcpsAdded } = await selectMCPs(analysis + questions.artifact);
 
   // Stage 11: Summarize what the run produced. MCP counts are
   // placeholders until those stages are wired up (currently always 0).

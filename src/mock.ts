@@ -244,7 +244,8 @@ export const ADDITIONAL_STEERING_MOCK = JSON.stringify(
     },
     "code-conventions.md": {
       recommended: false,
-      reason: "conventions mostly enforced by tsc/prettier; nothing non-obvious",
+      reason:
+        "conventions mostly enforced by tsc/prettier; nothing non-obvious",
     },
     "api-standards.md": {
       recommended: false,
@@ -271,3 +272,8 @@ export const ADDITIONAL_STEERING_MOCK = JSON.stringify(
   null,
   2,
 );
+/** Fixture for the optional steering-files generation step. */
+export const GENERATE_ADDITIONAL_FILES_MOCK = [
+  "Wrote selected .kiro/steering files",
+  "(mock mode: no files were actually written)",
+].join("\n");

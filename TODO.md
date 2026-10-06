@@ -23,7 +23,7 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 - [x] 3. Ask questions — agent decides (actively) which plain-language questions fill analysis gaps/`unknown`s; asked one-at-a-time via clack; produces answers artifact (`src/steps/ask-questions.ts`)
 - [x] 4. Generate mandatory steering files — `AGENTS.md`, `product.md`, `tech.md` (lean/research-backed; `structure.md` deliberately excluded as situational) (`src/steps/generate-mandatory-files.ts`)
 - [x] 5. Recommend additional steering files — agent recommends situational files (incl. `structure.md`) with per-file reasons, user confirms/adjusts via multiselect (`src/steps/additional-steering.ts`)
-- [ ] 6. Generate additional steering files (if any) _(placeholder)_
+- [x] 6. Generate additional steering files (if any) — selected per-file prompts are composed and written through `src/steps/generate-additional-files.ts`
 - [~] 7. Recommend skills — selection logic implemented (`src/skills.ts`); not yet wired into pipeline _(placeholder in flow)_
 - [ ] 8. Install selected skills (likely `npx skills`) _(placeholder)_
 - [ ] 9. Recommend MCP servers — agent determines relevance, looks them up online, user adjusts _(placeholder)_
@@ -32,7 +32,7 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 
 ### Cross-cutting
 
-- [~] Pass structured context between stages (analysis → questions wired; questions → generation pending)
+- [x] Pass structured context between stages (analysis → questions → mandatory/additional generation)
 - [x] Installer-style UX: announce up front (intro), per-stage progress (spinners), final summary (`src/summary.ts` recap panel)
 - [x] Scope `--trust-tools` per call (read-only structured tools by default; no `shell`)
 - [x] Mock mode — every LLM step skippable via `--mock`/`-m` or `KICKSTART_MOCK`; `prompt()` returns per-step fixtures from `src/mock.ts` (dev/testing without `kiro-cli`)
