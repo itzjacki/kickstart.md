@@ -46,7 +46,6 @@
           <div class="hero-command" aria-label="kickstart.md command">
             <div class="command-text">
               <code>npx kickstart.md</code>
-              <small class="system-requirements">Requires Node.js 24+</small>
             </div>
             <button
               class="copy-button"
@@ -56,6 +55,7 @@
               Copy
             </button>
           </div>
+          <small class="system-requirements">Requires Node.js 24+</small>
         </div>
         <figure class="hero-illustration">
           <figcaption class="robot-caption">
@@ -69,41 +69,77 @@
         </figure>
       </section>
 
-      <section aria-labelledby="what-title">
-        <div class="section-heading">
-          <h2 id="what-title">Get started with agentic development</h2>
-          <p>
-            This tool helps you boostrap your repository for agentic development
-            with Kiro. It analyzes your code base, asks questions, and generates
-            steering documentation and sets up tools to give you a good starting
-            point for AI-driven work.
-          </p>
+      <section class="info-section" aria-labelledby="what-title">
+        <div class="info-column">
+          <div class="section-heading">
+            <h2 id="what-title">Get started with agentic development</h2>
+            <p>
+              This tool helps you bootstrap your repository for agentic
+              development with Kiro. It analyzes your code base, asks questions,
+              and generates steering documentation and sets up tools to give you
+              a good starting point for AI-driven work.
+            </p>
+          </div>
+          <div class="info-items">
+            <button
+              class="info-item"
+              type="button"
+              data-output-key="mcps"
+              aria-controls="terminal-output"
+              aria-pressed="true"
+            >
+              <span class="info-item-title">(Almost) zero effort required</span>
+              <span class="info-item-description"
+                >Kickstart.md is designed to be easy to use, and requires no
+                prior knowledge of AI tooling.</span
+              >
+            </button>
+            <button
+              class="info-item"
+              type="button"
+              data-output-key="steering"
+              aria-controls="terminal-output"
+              aria-pressed="false"
+            >
+              <span class="info-item-title">Context-aware</span>
+              <span class="info-item-description"
+                >Steering files work, but only when used correctly. Kickstart.md
+                analyzes the codebase and recommends which steering files to
+                generate.</span
+              >
+            </button>
+            <button
+              class="info-item"
+              type="button"
+              data-output-key="skills"
+              aria-controls="terminal-output"
+              aria-pressed="false"
+            >
+              <span class="info-item-title">Build a toolkit</span>
+              <span class="info-item-description"
+                >Kickstart.md helps you find and select the skills and MCP
+                servers that would be useful in your project.</span
+              >
+            </button>
+          </div>
         </div>
-        <div class="cards">
-          <article class="card">
-            <h3>Project context</h3>
-            <p>
-              A concise description of the product, its purpose, and the people
-              it serves.
-            </p>
-          </article>
-          <article class="card">
-            <h3>Technical context</h3>
-            <p>
-              Non-obvious tooling, commands, constraints, and technical
-              direction relevant to future work.
-            </p>
-          </article>
-          <article class="card">
-            <h3>Agent guidance</h3>
-            <p>
-              Practical boundaries and steering files that help an AI coding
-              tool work effectively in the repository.
-            </p>
-          </article>
+
+        <div
+          class="terminal-example"
+          role="region"
+          aria-label="Example kickstart.md terminal output"
+        >
+          <div class="terminal-header" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <pre><code id="terminal-output" aria-live="polite"></code></pre>
         </div>
       </section>
     </main>
+
+    <div class="page-spacer" aria-hidden="true"></div>
 
     <footer class="site-footer">
       <p>Developed by Team Summit @ Norwegian Air Shuttle</p>

@@ -7,7 +7,7 @@ if (copyButton instanceof HTMLButtonElement) {
 
     try {
       await navigator.clipboard.writeText(command);
-      copyButton.textContent = "Copied ✅";
+      copyButton.textContent = "Copied ✓";
       window.setTimeout(() => {
         copyButton.textContent = "Copy";
       }, 1500);
@@ -15,6 +15,80 @@ if (copyButton instanceof HTMLButtonElement) {
       copyButton.textContent = "Select to copy";
     }
   });
+}
+
+const exampleOutputs = {
+  mcps: `
+│
+◇  MCPs has been installed
+│
+◇  kickstart.md 1.0.0 - result ───╮
+│                                 │
+│  Steering files: 5 files        │
+│    • AGENTS.md                  │
+│    • .kiro/steering/product.md  │
+│    • .kiro/steering/tech.md     │
+│    • code-conventions.md        │
+│    • security.md                │
+│                                 │
+│  Skills installed: 0            │
+│  MCP servers added: 0           │
+│                                 │
+├─────────────────────────────────╯
+│
+└  Kickstart complete!`.trim(),
+  steering: `
+│
+◆  Select the additional steering 
+│  files to generate:
+│  ◻ structure.md
+│  ◼ code-conventions.md (non-obvious
+│    coding patterns to follow)
+│  ◻ api-standards.md
+│  ◻ testing-standards.md
+│  ◼ security.md (security-sensitive
+│    handling (auth, secrets, PII))
+│  ◻ domain-glossary.md
+│  ◻ deployment.md
+└  ↑/↓ to navigate
+    • Space: select 
+    • Enter: confirm`.trim(),
+  skills: `
+│
+◆  Select the skills to install:
+│  ◼ skill-creator (create and 
+│    iterate on new skills)
+│  ◻ grill-me
+│  ◼ find-skills (discover and
+│    install new skills)
+│  ◻ prototype
+│  ◻ improve-codebase-architecture
+└  ↑/↓ to navigate
+    • Space: select
+    • Enter: confirm`.trim(),
+};
+
+const outputButtons = document.querySelectorAll("[data-output-key]");
+const terminalOutput = document.querySelector("#terminal-output");
+
+if (terminalOutput instanceof HTMLElement) {
+  const selectOutput = (button) => {
+    const outputKey = button.dataset.outputKey;
+    const output = exampleOutputs[outputKey];
+    if (!output) return;
+
+    terminalOutput.textContent = output;
+    outputButtons.forEach((item) => {
+      item.setAttribute("aria-pressed", String(item === button));
+    });
+  };
+
+  outputButtons.forEach((button) => {
+    button.addEventListener("click", () => selectOutput(button));
+  });
+
+  const initialButton = document.querySelector('[data-output-key="mcps"]');
+  if (initialButton) selectOutput(initialButton);
 }
 
 const topicButton = document.querySelector("[data-topic-cycle]");

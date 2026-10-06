@@ -5,7 +5,7 @@
   --text: #20252b;
   --muted: #5e6875;
   --border: #dce1e7;
-  --accent: #315f8c;
+  --accent: #247ba0;
   --accent-soft: #eaf1f8;
   --code-background: #20252b;
   --code-text: #f4f6f8;
@@ -25,7 +25,14 @@ html {
 }
 
 body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
   margin: 0;
+}
+
+.page-spacer {
+  flex: 1 1 auto;
 }
 
 a {
@@ -249,7 +256,9 @@ h1 {
 }
 
 .system-requirements {
-  color: #aeb9c5;
+  display: block;
+  margin: 0.45rem 0 0 1rem;
+  color: var(--muted);
   font-size: 0.72rem;
   letter-spacing: 0.02em;
   line-height: 1.2;
@@ -331,27 +340,98 @@ section {
   color: var(--muted);
 }
 
-.cards {
+.info-section {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
 }
 
-.card {
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: 0.65rem;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+.info-column {
+  min-width: 0;
 }
 
-.card h3 {
-  margin-top: 0;
+.info-items {
+  display: grid;
+  gap: 0.35rem;
 }
 
-.card p {
-  margin-bottom: 0;
+.info-item {
+  display: block;
+  width: 100%;
+  padding: 1.35rem 0.75rem;
+  border: 0;
+  border-radius: 0.35rem;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: background-color 160ms ease;
+}
+
+.info-item:hover,
+.info-item:focus-visible,
+.info-item[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+.info-item[aria-pressed="true"] {
+  background: var(--accent-soft);
+}
+
+.info-item-title,
+.info-item-description {
+  display: block;
+}
+
+.info-item-title {
+  margin-bottom: 0.45rem;
+  font-size: 1.17em;
+  font-weight: 700;
+}
+
+.info-item-description {
   color: var(--muted);
+}
+
+.info-item:hover .info-item-description,
+.info-item:focus-visible .info-item-description,
+.info-item[aria-pressed="true"] .info-item-description {
+  color: var(--muted);
+}
+
+.terminal-example {
+  min-width: 0;
+  min-height: 34rem;
+  padding: 1.5rem;
+  border-radius: 0.65rem;
+  color: var(--code-text);
+  background: var(--code-background);
+}
+
+.terminal-header {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 2rem;
+}
+
+.terminal-header span {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: #687582;
+}
+
+.terminal-example pre {
+  overflow-x: auto;
+  margin: 1.5rem 0 0;
+  color: #c4ced8;
+}
+
+.terminal-example code {
+  font-size: 0.85rem;
+  line-height: 1.7;
 }
 
 .command-panel {
@@ -384,7 +464,7 @@ code {
   text-align: center;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .header-inner {
     align-items: flex-start;
     flex-direction: column;
@@ -410,7 +490,7 @@ code {
     justify-content: flex-start;
   }
 
-  .cards {
+  .info-section {
     grid-template-columns: 1fr;
   }
 }
