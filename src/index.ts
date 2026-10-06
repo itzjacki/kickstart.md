@@ -13,23 +13,39 @@ import {
 } from "./steps/additional-steering.ts";
 import { selectSkills } from "./skills.ts";
 import { enableMockMode, isMockMode } from "./mock.ts";
+import { enableDebugMode, isDebugMode } from "./debug.ts";
+import { printHelp } from "./help.ts";
 
 async function main() {
   const { values } = parseArgs({
     options: {
+      help: { type: "boolean", short: "h", default: false },
       mock: { type: "boolean", short: "m", default: false },
+      debug: { type: "boolean", short: "d", default: false },
     },
     allowPositionals: true,
   });
 
+  if (values.help) {
+    printHelp();
+    return;
+  }
+
   if (values.mock) {
     enableMockMode();
+  }
+
+  if (values.debug) {
+    enableDebugMode();
   }
 
   // Stage 1: Introduction
   intro("kickstart.md — bootstrapping AI steering docs and tooling");
   if (isMockMode()) {
     log.warn("Running in mock mode — LLM steps return pre-made examples.");
+  }
+  if (isDebugMode()) {
+    log.warn("Running in debug mode — extra diagnostics will be shown.");
   }
   log.info("Info about the process will go here.");
 

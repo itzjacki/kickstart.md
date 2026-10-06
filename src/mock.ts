@@ -9,8 +9,7 @@
  *
  * Enable it with either:
  *   - the `--mock` (or `-m`) CLI flag, or
- *   - the `KICKSTART_MOCK` environment variable set to a truthy value
- *     (`1`, `true`, `yes`, `on`).
+ *   - the `KICKSTART_MOCK` environment variable set to `true` (case-insensitive).
  *
  * All canned outputs live in this module (one place to browse them). Each step
  * imports its own fixture and passes it to `prompt({ ..., mockOutput })`, so the
@@ -32,12 +31,9 @@ export const enableMockMode = (): void => {
   forcedMock = true;
 };
 
-const truthyEnv = (value: string | undefined): boolean =>
-  value !== undefined && ["1", "true", "yes", "on"].includes(value.toLowerCase());
-
 /** Whether mock mode is active (via `--mock` flag or `KICKSTART_MOCK` env var). */
 export const isMockMode = (): boolean =>
-  forcedMock || truthyEnv(process.env.KICKSTART_MOCK);
+  forcedMock || process.env.KICKSTART_MOCK?.toLowerCase() === "true";
 
 // --- Fixtures -------------------------------------------------------------
 // Each constant is the canned output for one LLM step. Imported by that step

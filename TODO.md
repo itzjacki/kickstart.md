@@ -36,6 +36,7 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 - [ ] Installer-style UX: announce up front, per-stage progress, final summary
 - [x] Scope `--trust-tools` per call (read-only structured tools by default; no `shell`)
 - [x] Mock mode — every LLM step skippable via `--mock`/`-m` or `KICKSTART_MOCK`; `prompt()` returns per-step fixtures from `src/mock.ts` (dev/testing without `kiro-cli`)
+- [x] Debug mode — `--debug`/`-d` or `KICKSTART_DEBUG` (`src/debug.ts`); surfaces each `kiro-cli` call's `stderr` from `prompt()` via clack `log.*` (never raw `console.*`)
 - [ ] Error handling / retry for individual stages
 - [ ] Decide the fate of the legacy `kickstart.md` prompt once the script reaches parity (retire or keep as fallback)
 
