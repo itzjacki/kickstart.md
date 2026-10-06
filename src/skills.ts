@@ -1,4 +1,4 @@
-import { multiselect, confirm, isCancel, cancel } from "@clack/prompts";
+import { multiselect, confirm, isCancel, cancel, note } from "@clack/prompts";
 import { prompt } from "./prompt.ts";
 import { SELECT_SKILLS_MOCK } from "./mock.ts";
 
@@ -23,11 +23,105 @@ export const SKILLS = {
     repository: "mattpocock/skills",
     hint: "find architecture improvement opportunities",
   },
+
+  "brainstorming": {
+    repository: "obra/superpowers",
+    hint: "explore requirements and solutions before implementation",
+  },
+  "writing-plans": {
+    repository: "obra/superpowers",
+    hint: "turn requirements into actionable implementation plans",
+  },
+  "domain-modeling": {
+    repository: "mattpocock/skills",
+    hint: "model the domain, entities, and relationships before coding",
+  },
+  "implement": {
+    repository: "mattpocock/skills",
+    hint: "execute an implementation plan systematically",
+  },
+
+  "tdd": {
+    repository: "mattpocock/skills",
+    hint: "develop features using behavior-focused test-driven development",
+  },
+  "agent-browser": {
+    repository: "vercel-labs/agent-browser",
+    hint: "test and interact with web applications through a browser",
+  },
+  "verification-before-completion": {
+    repository: "obra/superpowers",
+    hint: "verify implementation results before declaring work complete",
+  },
+  "systematic-debugging": {
+    repository: "obra/superpowers",
+    hint: "diagnose bugs methodically instead of guessing at fixes",
+  },
+  "diagnosing-bugs": {
+    repository: "mattpocock/skills",
+    hint: "investigate and isolate bugs using a structured workflow",
+  },
+
+  "code-review": {
+    repository: "mattpocock/skills",
+    hint: "review code for correctness, maintainability, and risks",
+  },
+  "setup-pre-commit": {
+    repository: "mattpocock/skills",
+    hint: "configure automated checks before commits",
+  },
+  "git-guardrails-claude-code": {
+    repository: "mattpocock/skills",
+    hint: "protect repositories from unsafe AI-driven Git operations",
+  },
+  "resolving-merge-conflicts": {
+    repository: "mattpocock/skills",
+    hint: "resolve Git merge conflicts safely and systematically",
+  },
+
+  "frontend-design": {
+    repository: "anthropics/skills",
+    hint: "build distinctive production-quality frontend interfaces",
+  },
+  "web-design-guidelines": {
+    repository: "vercel-labs/agent-skills",
+    hint: "apply practical web UI, accessibility, and interaction guidelines",
+  },
+  "vercel-react-best-practices": {
+    repository: "vercel-labs/agent-skills",
+    hint: "build performant and maintainable React applications",
+  },
+  "vercel-composition-patterns": {
+    repository: "vercel-labs/agent-skills",
+    hint: "design reusable and maintainable React component architectures",
+  },
+
+  "subagent-driven-development": {
+    repository: "obra/superpowers",
+    hint: "split implementation into focused tasks handled by specialized agents",
+  },
+
+  "prisma-database-setup": {
+    repository: "prisma/skills",
+    hint: "set up and work with Prisma databases and schemas",
+  },
+  supabase: {
+    repository: "supabase/agent-skills",
+    hint: "build applications with Supabase backend services",
+  },
 } as const;
 
 export type Skill = keyof typeof SKILLS;
 
 export type SkillSelection = Record<Skill, boolean>;
+
+/** The agent's recommendation for a single skill. */
+export interface SkillRecommendation {
+  recommended: boolean;
+  reason: string;
+}
+
+export type SkillRecommendations = Record<Skill, SkillRecommendation>;
 
 export interface SelectSkillsArgs {
   projectContext: string;
@@ -36,21 +130,78 @@ export interface SelectSkillsArgs {
 
 export const SKILL_NAMES = Object.keys(SKILLS) as Skill[];
 
+const emptyRecommendations = (): SkillRecommendations =>
+  Object.fromEntries(
+    SKILL_NAMES.map((skill) => [skill, { recommended: false, reason: "" }]),
+  ) as SkillRecommendations;
+
+/**
+ * Ask the agent which skills fit this project (with a per-skill reason)
+ */
 export async function selectSkills({
   projectContext,
   userInput,
-}: SelectSkillsArgs): Promise<SkillSelection> {
-  const template = Object.fromEntries(
-    SKILL_NAMES.map((skill) => [skill, false]),
+}: SelectSkillsArgs): Promise<SkillRecommendations> {
+  const promptText = buildPrompt(projectContext, userInput);
+
+  const raw = await prompt({
+    promptString: promptText,
+    mockOutput: SELECT_SKILLS_MOCK,
+  });
+
+  return parseRecommendations(raw);
+}
+
+const parseRecommendations = (raw: string): SkillRecommendations => {
+  const result = emptyRecommendations();
+
+  const start = raw.indexOf("{");
+  const end = raw.lastIndexOf("}");
+  if (start === -1 || end <= start) {
+    return result;
+  }
+
+  try {
+    const parsed = JSON.parse(raw.slice(start, end + 1)) as Record<
+      string,
+      unknown
+    >;
+
+    for (const skill of SKILL_NAMES) {
+      const entry = parsed[skill];
+      if (entry && typeof entry === "object") {
+        const { recommended, reason } = entry as Record<string, unknown>;
+        result[skill] = {
+          recommended: recommended === true,
+          reason: typeof reason === "string" ? reason.trim() : "",
+        };
+      }
+    }
+  } catch {
+    return emptyRecommendations();
+  }
+
+  return result;
+};
+
+const buildPrompt = (projectContext: string, userInput: string): string => {
+  const example = Object.fromEntries(
+    SKILL_NAMES.map((skill) => [
+      skill,
+      { recommended: false, reason: "<terse reason>" },
+    ]),
   );
 
-  const promptText = `
-Select which optional skills are useful for this project.
-Only enable a skill when it clearly fits.
-Default to false when unsure.
+  return `
+## Your task: recommend skills for this project
+
+Decide which of a fixed set of skills this project would genuinely benefit from.
+Be conservative: only recommend a skill when it clearly fits. Default to NOT
+recommending when the signal is weak. Base your decision on the project context
+and the user's input; never invent evidence.
 
 ## Available skills
-${SKILL_NAMES.map((skill) => `- ${skill}`).join("\n")}
+${SKILL_NAMES.map((skill) => `- \`${skill}\`: ${SKILLS[skill].hint}`).join("\n")}
 
 ## Project context
 ${projectContext.trim() || "(none provided)"}
@@ -58,39 +209,30 @@ ${projectContext.trim() || "(none provided)"}
 ## User input
 ${userInput.trim() || "(none provided)"}
 
-## Output
-Return ONLY a JSON object with these keys and boolean values:
+## Output format
+Return ONLY a JSON object keyed by the exact skill names above. For each, give a
+boolean \`recommended\` and a terse \`reason\` (one clause: cite the evidence that
+justifies recommending it, or why it is being skipped). Example shape:
 
-${JSON.stringify(template, null, 2)}
+${JSON.stringify(example, null, 2)}
 `.trim();
-
-  const raw = await prompt({
-    promptString: promptText,
-    mockOutput: SELECT_SKILLS_MOCK,
-  });
-
-  const start = raw.indexOf("{");
-  const end = raw.lastIndexOf("}");
-
-  if (start === -1 || end <= start) {
-    return template as SkillSelection;
-  }
-
-  try {
-    const parsed = JSON.parse(raw.slice(start, end + 1));
-
-    return Object.fromEntries(
-      SKILL_NAMES.map((skill) => [skill, parsed[skill] === true]),
-    ) as SkillSelection;
-  } catch {
-    return template as SkillSelection;
-  }
-}
+};
 
 export async function confirmSkillSelection(
-  selection: SkillSelection,
+  recommendations: SkillRecommendations,
 ): Promise<Skill[] | null> {
-  let initialValues = SKILL_NAMES.filter((skill) => selection[skill]);
+  const summary = SKILL_NAMES.map((skill) => {
+    const { recommended, reason } = recommendations[skill];
+    const mark = recommended ? "✓" : "·";
+    return `${mark} ${skill}${reason ? ` — ${reason}` : ""}`;
+  }).join("\n");
+  note(summary, "Suggested skills");
+
+  // Start from the agent's recommendation
+  // After a "no" -> re-seed the multiselect with the user's current choice
+  let initialValues = SKILL_NAMES.filter(
+    (skill) => recommendations[skill].recommended,
+  );
 
   while (true) {
     const picked = await multiselect<Skill>({

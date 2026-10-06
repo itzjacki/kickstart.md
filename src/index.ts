@@ -17,7 +17,7 @@ import {
 import {
   confirmSkillSelection,
   selectSkills,
-  type SkillSelection,
+  type SkillRecommendations,
 } from "./skills.ts";
 import { enableMockMode, isMockMode } from "./mock.ts";
 import { enableDebugMode, isDebugMode } from "./debug.ts";
@@ -157,7 +157,7 @@ async function main() {
   ]);
 
   // Stage 7: Recommend skills
-  let suggestedSkills!: SkillSelection;
+  let suggestedSkills!: SkillRecommendations;
   await tasks([
     {
       title: "Recommending skills",

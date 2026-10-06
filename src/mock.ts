@@ -122,12 +122,106 @@ export const ASK_QUESTIONS_MOCK = JSON.stringify(
 /** Fixture for the skill-selection step (the JSON the step parses). */
 export const SELECT_SKILLS_MOCK = JSON.stringify(
   {
-    "update-steering": true,
-    "skill-creator": true,
-    "grill-me": false,
-    "find-skills": false,
-    "prototype": false,
-    "improve-codebase-architecture": false,
+    "skill-creator": {
+      recommended: true,
+      reason: "meta-toolkit that authors skills — skill creation is core work",
+    },
+    "grill-me": {
+      recommended: true,
+      reason: "no evidence of plan/design stress-testing need",
+    },
+    "find-skills": {
+      recommended: true,
+      reason: "skill discovery not a stated need",
+    },
+    prototype: {
+      recommended: true,
+      reason: "no throwaway-prototype workflow signalled",
+    },
+    "improve-codebase-architecture": {
+      recommended: true,
+      reason: "growing TS CLI benefits from architecture review",
+    },
+    brainstorming: {
+      recommended: false,
+      reason: "requirements already scoped",
+    },
+    "writing-plans": {
+      recommended: false,
+      reason: "no multi-step planning workflow signalled",
+    },
+    "domain-modeling": {
+      recommended: false,
+      reason: "domain is small and already modeled",
+    },
+    implement: {
+      recommended: false,
+      reason: "no formal plan-execution workflow in use",
+    },
+    tdd: {
+      recommended: true,
+      reason: "no test suite yet",
+    },
+    "agent-browser": {
+      recommended: false,
+      reason: "CLI tool, no web UI to drive",
+    },
+    "verification-before-completion": {
+      recommended: true,
+      reason: "typecheck-before-done discipline fits this repo",
+    },
+    "systematic-debugging": {
+      recommended: false,
+      reason: "no recurring debugging pain signalled",
+    },
+    "diagnosing-bugs": {
+      recommended: false,
+      reason: "no recurring debugging pain signalled",
+    },
+    "code-review": {
+      recommended: false,
+      reason: "small team/scope; not a stated need",
+    },
+    "setup-pre-commit": {
+      recommended: false,
+      reason: "no pre-commit tooling in repo",
+    },
+    "git-guardrails-claude-code": {
+      recommended: false,
+      reason: "Git guardrails already covered in AGENTS.md",
+    },
+    "resolving-merge-conflicts": {
+      recommended: false,
+      reason: "no evidence of frequent merge conflicts",
+    },
+    "frontend-design": {
+      recommended: false,
+      reason: "no frontend surface",
+    },
+    "web-design-guidelines": {
+      recommended: true,
+      reason: "no frontend surface",
+    },
+    "vercel-react-best-practices": {
+      recommended: false,
+      reason: "not a React project",
+    },
+    "vercel-composition-patterns": {
+      recommended: false,
+      reason: "not a React project",
+    },
+    "subagent-driven-development": {
+      recommended: false,
+      reason: "single-agent flow; no subagent split signalled",
+    },
+    "prisma-database-setup": {
+      recommended: false,
+      reason: "no database",
+    },
+    supabase: {
+      recommended: false,
+      reason: "no Supabase backend",
+    },
   },
   null,
   2,
