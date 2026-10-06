@@ -22,7 +22,7 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 - [x] 2. Analyze codebase — produce agent-oriented analysis artifact (`src/steps/codebase-analysis.ts`)
 - [x] 3. Ask questions — agent decides (actively) which plain-language questions fill analysis gaps/`unknown`s; asked one-at-a-time via clack; produces answers artifact (`src/steps/ask-questions.ts`)
 - [x] 4. Generate mandatory steering files — `AGENTS.md`, `product.md`, `tech.md` (lean/research-backed; `structure.md` deliberately excluded as situational) (`src/steps/generate-mandatory-files.ts`)
-- [ ] 5. Recommend additional steering files — agent recommends situational files (incl. `structure.md`), user confirms/adjusts selection _(placeholder)_
+- [x] 5. Recommend additional steering files — agent recommends situational files (incl. `structure.md`) with per-file reasons, user confirms/adjusts via multiselect (`src/steps/additional-steering.ts`)
 - [ ] 6. Generate additional steering files (if any) _(placeholder)_
 - [~] 7. Recommend skills — selection logic implemented (`src/skills.ts`); not yet wired into pipeline _(placeholder in flow)_
 - [ ] 8. Install selected skills (likely `npx skills`) _(placeholder)_

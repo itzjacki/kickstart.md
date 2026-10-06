@@ -145,3 +145,40 @@ export const GENERATE_MANDATORY_FILES_MOCK = [
   "Wrote .kiro/steering/tech.md",
   "(mock mode: no files were actually written)",
 ].join("\n");
+
+/** Fixture for the additional-steering recommendation step (the JSON parsed). */
+export const ADDITIONAL_STEERING_MOCK = JSON.stringify(
+  {
+    "structure.md": {
+      recommended: false,
+      reason: "small, conventional src/ layout — self-evident",
+    },
+    "code-conventions.md": {
+      recommended: false,
+      reason: "conventions mostly enforced by tsc/prettier; nothing non-obvious",
+    },
+    "api-standards.md": {
+      recommended: false,
+      reason: "no API surface (CLI tool)",
+    },
+    "testing-standards.md": {
+      recommended: false,
+      reason: "no test suite yet",
+    },
+    "security.md": {
+      recommended: false,
+      reason: "no auth/PII/secrets handling",
+    },
+    "domain-glossary.md": {
+      recommended: true,
+      reason:
+        "steering/skills/agent-config vocabulary is domain-specific and shapes how code is written",
+    },
+    "deployment.md": {
+      recommended: false,
+      reason: "no non-trivial deploy/infra in repo",
+    },
+  },
+  null,
+  2,
+);

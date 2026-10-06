@@ -5,6 +5,12 @@ import { intro, outro, log, tasks, cancel } from "@clack/prompts";
 import { analyzeCodebase } from "./steps/codebase-analysis.ts";
 import { askQuestions } from "./steps/ask-questions.ts";
 import { generateMandatoryFiles } from "./steps/generate-mandatory-files.ts";
+import {
+  recommendAdditionalSteeringFiles,
+  confirmAdditionalSteeringFiles,
+  type SteeringRecommendations,
+  type AdditionalSteeringSelection,
+} from "./steps/additional-steering.ts";
 import { selectSkills } from "./skills.ts";
 import { enableMockMode, isMockMode } from "./mock.ts";
 
@@ -57,6 +63,9 @@ async function main() {
       : "No questions needed.",
   );
 
+  // Stages 4 & 5a: non-interactive agent work — generate mandatory files, then
+  // compute the additional-steering recommendation. Both run in the spinner.
+  let steeringRecommendations: SteeringRecommendations | undefined;
   await tasks([
     // Stage 4: Generate mandatory steering files (AGENTS.md, product.md,
     // tech.md). The agent writes them to disk directly.
@@ -70,11 +79,43 @@ async function main() {
         return "Mandatory steering files generated";
       },
     },
+    // Stage 5a: Recommend additional (situational) steering files.
     {
       title: "Recommending additional steering files",
-      task: async () =>
-        "Placeholder for step: recommend additional steering files",
+      task: async () => {
+        steeringRecommendations = await recommendAdditionalSteeringFiles({
+          analysis,
+          answers: questions.artifact,
+        });
+        return "Additional steering files recommended";
+      },
     },
+  ]);
+
+  // Stage 5b: Confirm/adjust the additional-steering selection. Interactive, so
+  // it runs outside the spinner `tasks` block.
+  let additionalSteering: AdditionalSteeringSelection | null = null;
+  if (steeringRecommendations) {
+    additionalSteering = await confirmAdditionalSteeringFiles(
+      steeringRecommendations,
+    );
+    if (additionalSteering === null) {
+      // User cancelled during confirmation.
+      cancel("Kickstart cancelled.");
+      process.exitCode = 1;
+      return;
+    }
+    const selected = Object.entries(additionalSteering)
+      .filter(([, rec]) => rec.recommended)
+      .map(([file]) => file);
+    log.info(
+      selected.length > 0
+        ? `Additional steering files to generate: ${selected.join(", ")}.`
+        : "No additional steering files selected.",
+    );
+  }
+
+  await tasks([
     {
       title: "Generating additional steering files",
       task: async () =>
