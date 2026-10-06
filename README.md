@@ -2,57 +2,99 @@
 
 ## The short version
 
-A tool that prepares your project for AI development with as little friction as possible.
+A CLI that prepares your project for AI-assisted development with as little friction as possible.
 
-> **Heads up — rewrite in progress.** kickstart.md is moving from a single prompt you hand to your agent into a small CLI that orchestrates the process by calling `kiro-cli` for you, step by step. This gives it tighter control over each stage and a smoother, installer-style experience. The sections below describe what the tool does; the exact command to run it will be finalized as the CLI rewrite lands.
-
-The classic way to run it (the single-prompt approach, still works during the transition):
+Run it inside the repository you want to set up:
 
 ```
-kiro-cli chat "Go to https://kickstart.md/kickstart.md and execute the instructions found there."
+npx kickstart.md
 ```
 
-_PS: Right now the tool follows Kiro's standard for steering file structure, but I'm hoping to change this soon, adding other tools' preferred structures as well. Why Kiro? Because the motivation for this project comes from me not wanting to manually scaffold a bunch of repos I use at work - where we use Kiro._
+It analyzes your project, asks you a few plain-language questions, and writes a tailored set of steering files (`AGENTS.md` + a `.kiro/` directory), picks a conservative set of skills, and suggests MCP servers you can enable later.
+
+Real runs require [`kiro-cli`](https://github.com/aws/kiro) on your `PATH` — kickstart.md drives the process by making focused, scoped calls to it, one per step.
+
+_PS: Right now the tool follows Kiro's standard for steering file structure. I'm hoping to support other tools' preferred structures later. Why Kiro? Because the motivation for this project comes from me not wanting to manually scaffold a bunch of repos I use at work — where we use Kiro._
 
 ## The slightly longer version
 
-Agentic AI Coding tools like Claude Code, Kiro and Cursor are way more effective if they're given a proper structure to operate in. This structure usually includes some steering documentation, skills and subagent specifications. kickstart.md generates all of this stuff for you based on best pracices, the peculiarities of your particular project, and (some) user input.
+Agentic AI coding tools like Claude Code, Kiro, and Cursor are far more effective when they're given a proper structure to operate in. That structure usually includes steering documentation, skills, and MCP configuration. kickstart.md generates this for you based on best practices, the peculiarities of your particular project, and a little user input.
 
-Rather than handing your agent one big prompt and hoping it runs end-to-end, kickstart.md is becoming a script that drives the process: it makes multiple, focused calls to `kiro-cli` — one per step (analyze, generate steering files, pick skills, pick subagents, suggest extras) — and runs its own logic and asks you plain-language questions in between. That means a more predictable, debuggable, installer-like experience that tells you what it's going to do, shows progress as it goes, and summarizes what it created.
+Rather than handing your agent one big prompt and hoping it runs end-to-end, kickstart.md is a script that drives the process: it makes multiple, focused calls to `kiro-cli` — one per step (analyze, ask questions, generate steering files, recommend skills, suggest MCP servers) — and runs its own logic and asks you plain-language questions in between. The result is a predictable, installer-style experience that tells you what it's going to do, shows progress as it goes, and summarizes what it created.
 
-This repo also comes with a bunch of templates for useful skills and subagents which should be useful in most projects.
+This repo also ships a set of skill templates that are useful in most projects.
+
+## Installation and usage
+
+kickstart.md is a Node CLI (Node ≥ 24). The easiest way to run it is with `npx`, which requires no install:
+
+```
+npx kickstart.md
+```
+
+Run it from inside the repository you want to kickstart.
+
+### Options
+
+```
+-h, --help    Show usage.
+-m, --mock    Mock mode: skip all LLM calls and use pre-made example outputs
+              (for development/testing without kiro-cli).
+-d, --debug   Debug mode: show extra diagnostics.
+```
+
+### Environment variables
+
+- `KICKSTART_MOCK` — set to `true` to enable mock mode.
+- `KICKSTART_DEBUG` — set to `true` to enable debug mode.
+
+### Requirements
+
+- Node ≥ 24.
+- `kiro-cli` on your `PATH`.
 
 ## What does kickstart.md do?
 
-When you run it, the following things happen, in order:
+When you run it, the following steps happen in order:
 
-### Step 1: Analysis and orientation
+### 1. Analyze the codebase
 
-The agent looks around the repository to get a lay of the land. It will likely also ask you some clarifying questions about the stuff that's hard to figure out from just looking at the code.
+The tool looks around the repository to get a lay of the land — languages, frameworks, build/test/lint tooling, and conventions — and produces an analysis it uses to steer the rest of the run.
 
-### Step 2: Core steering files
+### 2. Ask you a few questions
 
-The agent generates a fundamental set of steering files:
+Based on the analysis, the tool decides which plain-language questions would fill the gaps that are hard to figure out from the code alone, and asks them one at a time.
 
-- `AGENTS.md`/`CLAUDE.md`: The contents of this file is sent along with every prompt you make in your agentic AI tool. Think of it as a system prompt.
-- `product.md`: A non-technical description of your product. If your repository is a website, this describes the "business purpose" of the website.
-- `tech.md`: A description of the tech stack used in the repository.
-- `structure.md`: A description of the code structure and code conventions observed during the analysis phase.
+### 3. Generate the mandatory steering files
 
-### Step 3: Skill selection
+A small, mandatory set of steering files is always generated:
 
-The Agent selects skills from [the skills catalogue](/templates/skills/README.md) that it judges to be useful in your repository. This is purposefully designed to be conservative in its selection, in order to not bloat your project.
+- `AGENTS.md` — loaded into context on every turn in your agentic AI tool. Think of it as a project-specific system prompt: project context plus agent constraints.
+- `.kiro/steering/product.md` — a non-technical description of what the project is, its users, and its purpose.
+- `.kiro/steering/tech.md` — the tech stack, plus build/test/lint commands.
 
-### Step 4: Subagent selection
+### 4. Recommend and generate additional steering files
 
-The agent selects subagents to specify in your project, based on [the agent catalogue](/templates/agents/README.md). Like with skills, this prioritizes not bloating your project.
+The tool recommends situational steering files when it judges them useful — for example `structure.md` for an unusual layout, or API/testing standards files — each with a reason. You confirm or adjust the selection, and the chosen files are generated.
 
-### Step 5: Optional steering files
+### 5. Recommend and install skills
 
-The Agent determines if any more steering files would be useful in your repository. If your project is a set of APIs, it might suggest creating a steering file for API principles, for example.
+The tool selects skills it judges useful for your repository, you confirm the selection, and they're installed into `.kiro/skills/`. The selection is deliberately conservative to avoid bloating your project.
+
+### 6. Suggest MCP servers
+
+The tool suggests MCP servers relevant to your project that you can enable later.
+
+### 7. Summary
+
+Finally, it reports everything it created and installed.
+
+## Less is more
+
+Generated steering loads into the agent's context on every turn, so kickstart.md deliberately prefers a lean setup over a comprehensive one. It includes only non-discoverable information, avoids duplicating what the linter or the code already enforces, and omits anything it isn't sure about. Only `AGENTS.md`, `product.md`, and `tech.md` are mandatory; everything else is situational.
 
 ## Who is this for?
 
-The point of this project is not to create the perfect agentic AI setup. If you're already familiar with how to properly steer agentic AI, you will probably get better results from handcrafting something. The goal is to get you 90% of the way there for 10% of the effort.
+The point of this project is not to create the perfect agentic AI setup. If you're already familiar with how to properly steer agentic AI, you'll probably get better results handcrafting something. The goal is to get you 90% of the way there for 10% of the effort.
 
-I've purposefully designed kickstart.md to leave you with a setup which prefers to be too lean, rather than too bloated. I recommend manually adding to and tweaking the result as you get experience with how it works, but it should be good enough that you can leave it in peace if this sort of stuff doesn't interest you at all.
+kickstart.md is intentionally designed to leave you with a setup that errs on the side of too lean rather than too bloated. I recommend tweaking and adding to the result as you get a feel for how it works, but it should be good enough to leave in peace if this sort of thing doesn't interest you at all.

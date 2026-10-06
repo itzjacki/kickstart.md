@@ -55,7 +55,7 @@ ${aiContext.trim() || "(no ai context provided)"}
 
 export const selectMCPs = async (
   aiContext: string,
-): Promise<{ mcpsAdded: number }> => {
+): Promise<{ mcpsAdded: string[] }> => {
   const mcpCollection: MCP[] = [
     {
       name: "atlassian",
@@ -83,7 +83,6 @@ export const selectMCPs = async (
         const json = aiRecommendedMCPs.match(/\[{[\s\S]*}]/);
         if (!json) return;
 
-        log.info(json[0]);
         const foo = JSON.parse(json[0]) as MCP[];
         mcpCollection.push(...foo);
       },
@@ -98,7 +97,7 @@ export const selectMCPs = async (
     required: false,
   });
 
-  if (typeof mcps === "symbol") return { mcpsAdded: 0 };
+  if (typeof mcps === "symbol") return { mcpsAdded: [] };
 
   await tasks([
     {
@@ -146,7 +145,7 @@ export const selectMCPs = async (
     },
   ]);
 
-  return { mcpsAdded: mcps.length };
+  return { mcpsAdded: mcps };
 };
 
 const mockOutput =

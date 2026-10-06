@@ -14,8 +14,8 @@ export interface RunSummary {
   additionalFiles: readonly string[];
   /** Names of the skills that were installed. */
   skillsInstalled: readonly string[];
-  /** How many MCP servers were added (as disabled suggestions). */
-  mcpServersAdded: number;
+  /** Names of the MCP servers that were added (as disabled suggestions). */
+  mcpServersAdded: readonly string[];
 }
 
 /**
@@ -30,11 +30,9 @@ const countLabel = (
 /**
  * Render the end-of-run recap and the closing outro.
  *
- * CLI summaries work best as a scannable recap of counts, enumerating only the
- * small, high-signal set (the steering files that were written). Larger or
- * open-ended sets (skills, MCP servers) are reported as counts rather than
- * listed item-by-item, which keeps the output readable and scales as those
- * stages produce more.
+ * CLI summaries work best as a scannable recap of counts, enumerating the
+ * high-signal sets the user cares about: the steering files that were written,
+ * the skills that were installed, and the MCP servers that were added.
  */
 export const renderSummary = ({
   mandatoryFiles,
@@ -51,7 +49,8 @@ export const renderSummary = ({
     `Skills installed: ${countLabel(skillsInstalled.length, "skill")}`,
     ...skillsInstalled.map((skill) => `  • ${skill}`),
     "",
-    `MCP servers added: ${mcpServersAdded}`,
+    `MCP servers added: ${countLabel(mcpServersAdded.length, "server")}`,
+    ...mcpServersAdded.map((mcp) => `  • ${mcp}`),
   ];
 
   return lines.join("\n");
