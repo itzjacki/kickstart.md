@@ -28,12 +28,12 @@ The run is an ordered pipeline. Each agent-backed stage makes its own scoped `ki
 - [ ] 8. Install selected skills (likely `npx skills`) _(placeholder)_
 - [ ] 9. Recommend MCP servers — agent determines relevance, looks them up online, user adjusts _(placeholder)_
 - [ ] 10. Add selected MCP servers (disabled suggestions in agent config) _(placeholder)_
-- [x] 11. Summarize — report everything created/installed (`@clack/prompts` outro; no agent call)
+- [x] 11. Summarize — report everything created/installed via a clack `note` recap panel + `outro` (`src/summary.ts`): lists the steering files written (mandatory + confirmed additional), and reports skills/MCP as counts rather than item dumps. Skills/MCP counts are placeholder `0`s until stages 7–10 are wired.
 
 ### Cross-cutting
 
 - [~] Pass structured context between stages (analysis → questions wired; questions → generation pending)
-- [ ] Installer-style UX: announce up front, per-stage progress, final summary
+- [x] Installer-style UX: announce up front (intro), per-stage progress (spinners), final summary (`src/summary.ts` recap panel)
 - [x] Scope `--trust-tools` per call (read-only structured tools by default; no `shell`)
 - [x] Mock mode — every LLM step skippable via `--mock`/`-m` or `KICKSTART_MOCK`; `prompt()` returns per-step fixtures from `src/mock.ts` (dev/testing without `kiro-cli`)
 - [x] Debug mode — `--debug`/`-d` or `KICKSTART_DEBUG` (`src/debug.ts`); surfaces each `kiro-cli` call's `stderr` from `prompt()` via clack `log.*` (never raw `console.*`)

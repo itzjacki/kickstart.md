@@ -4,7 +4,10 @@ import { parseArgs } from "node:util";
 import { intro, outro, log, tasks, cancel } from "@clack/prompts";
 import { analyzeCodebase } from "./steps/codebase-analysis.ts";
 import { askQuestions } from "./steps/ask-questions.ts";
-import { generateMandatoryFiles } from "./steps/generate-mandatory-files.ts";
+import {
+  generateMandatoryFiles,
+  MANDATORY_FILES,
+} from "./steps/generate-mandatory-files.ts";
 import {
   recommendAdditionalSteeringFiles,
   confirmAdditionalSteeringFiles,
@@ -15,6 +18,7 @@ import { selectSkills } from "./skills.ts";
 import { enableMockMode, isMockMode } from "./mock.ts";
 import { enableDebugMode, isDebugMode } from "./debug.ts";
 import { printHelp } from "./help.ts";
+import { showSummary } from "./summary.ts";
 
 async function main() {
   const { values } = parseArgs({
@@ -109,6 +113,7 @@ async function main() {
   // Stage 5b: Confirm/adjust the additional-steering selection. Interactive, so
   // it runs outside the spinner `tasks` block.
   let additionalSteering: AdditionalSteeringSelection | null = null;
+  let selectedAdditionalFiles: string[] = [];
   if (steeringRecommendations) {
     additionalSteering = await confirmAdditionalSteeringFiles(
       steeringRecommendations,
@@ -119,12 +124,12 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    const selected = Object.entries(additionalSteering)
+    selectedAdditionalFiles = Object.entries(additionalSteering)
       .filter(([, rec]) => rec.recommended)
       .map(([file]) => file);
     log.info(
-      selected.length > 0
-        ? `Additional steering files to generate: ${selected.join(", ")}.`
+      selectedAdditionalFiles.length > 0
+        ? `Additional steering files to generate: ${selectedAdditionalFiles.join(", ")}.`
         : "No additional steering files selected.",
     );
   }
@@ -153,8 +158,15 @@ async function main() {
     },
   ]);
 
-  // Stage 11: Summarize.
-  outro("Kickstart complete. Should probably put some more info here.");
+  // Stage 11: Summarize what the run produced. Skills/MCP counts are
+  // placeholders until those stages are wired up (currently always 0).
+  showSummary({
+    mandatoryFiles: MANDATORY_FILES,
+    additionalFiles: selectedAdditionalFiles,
+    skillsInstalled: 0,
+    mcpServersAdded: 0,
+  });
+  outro("Kickstart complete!");
 }
 
 main().catch((error) => {
