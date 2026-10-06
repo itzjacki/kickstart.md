@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "util";
 import { createPromptText } from "./assemble-prompt.ts";
+import { isMockMode } from "./mock.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -20,12 +21,25 @@ type KiroTool = OptionalKiroTool & DefaultKiroTool;
 interface Prompt {
   promptString: string;
   optionalAllowedTools?: OptionalKiroTool[];
+  /**
+   * The canned output to return when mock mode is active. Steps import their
+   * fixture from `src/mock.ts` and pass it here so mock runs behave
+   * realistically. Ignored when mock mode is off.
+   */
+  mockOutput?: string;
 }
 
 export const prompt = async ({
   promptString,
   optionalAllowedTools,
+  mockOutput,
 }: Prompt): Promise<string> => {
+  // In mock mode, skip the real agent call entirely and return the pre-made
+  // example. This keeps the full orchestrator flow runnable without kiro-cli.
+  if (isMockMode()) {
+    return mockOutput ?? "(mock mode: no mockOutput provided for this step)";
+  }
+
   const allowedTools = Array.from(
     new Set(defaultAllowedKiroTools).union(new Set(optionalAllowedTools)),
   );

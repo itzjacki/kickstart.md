@@ -1,5 +1,6 @@
 import { text, note, isCancel, cancel } from "@clack/prompts";
 import { prompt } from "../prompt.ts";
+import { ASK_QUESTIONS_MOCK } from "../mock.ts";
 
 export interface Question {
   /** Stable identifier the agent assigns to the question. */
@@ -75,7 +76,10 @@ export const askQuestions = async (
  * list.
  */
 const decideQuestions = async (analysis: string): Promise<Question[]> => {
-  const raw = await prompt({ promptString: buildDecisionPrompt(analysis) });
+  const raw = await prompt({
+    promptString: buildDecisionPrompt(analysis),
+    mockOutput: ASK_QUESTIONS_MOCK,
+  });
 
   const start = raw.indexOf("{");
   const end = raw.lastIndexOf("}");

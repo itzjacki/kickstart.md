@@ -1,14 +1,30 @@
 #!/usr/bin/env node
 
+import { parseArgs } from "node:util";
 import { intro, outro, log, tasks, cancel } from "@clack/prompts";
 import { analyzeCodebase } from "./steps/codebase-analysis.ts";
 import { askQuestions } from "./steps/ask-questions.ts";
 import { generateMandatoryFiles } from "./steps/generate-mandatory-files.ts";
 import { selectSkills } from "./skills.ts";
+import { enableMockMode, isMockMode } from "./mock.ts";
 
 async function main() {
+  const { values } = parseArgs({
+    options: {
+      mock: { type: "boolean", short: "m", default: false },
+    },
+    allowPositionals: true,
+  });
+
+  if (values.mock) {
+    enableMockMode();
+  }
+
   // Stage 1: Introduction
   intro("kickstart.md — bootstrapping AI steering docs and tooling");
+  if (isMockMode()) {
+    log.warn("Running in mock mode — LLM steps return pre-made examples.");
+  }
   log.info("Info about the process will go here.");
 
   // Temporarily put this here, feel free to move it @daria

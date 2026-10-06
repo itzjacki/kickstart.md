@@ -1,5 +1,6 @@
 import { multiselect, confirm, isCancel, cancel } from "@clack/prompts";
 import { prompt } from "./prompt.ts";
+import { SELECT_SKILLS_MOCK } from "./mock.ts";
 
 export const SKILLS = {
   "update-kickstart": {
@@ -65,7 +66,10 @@ Return ONLY a JSON object with these keys and boolean values:
 ${JSON.stringify(template, null, 2)}
 `.trim();
 
-  const raw = await prompt({ promptString: promptText });
+  const raw = await prompt({
+    promptString: promptText,
+    mockOutput: SELECT_SKILLS_MOCK,
+  });
 
   const start = raw.indexOf("{");
   const end = raw.lastIndexOf("}");

@@ -1,7 +1,11 @@
 import { prompt } from "../prompt.ts";
+import { CODEBASE_ANALYSIS_MOCK } from "../mock.ts";
 
 export const analyzeCodebase = async () => {
-  const analysisResult = await prompt({ promptString: analysisPrompt });
+  const analysisResult = await prompt({
+    promptString: analysisPrompt,
+    mockOutput: CODEBASE_ANALYSIS_MOCK,
+  });
   return analysisResult;
 };
 

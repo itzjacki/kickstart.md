@@ -1,5 +1,6 @@
 import { prompt } from "../prompt.ts";
 import { KICKSTART_VERSION } from "../version.ts";
+import { GENERATE_MANDATORY_FILES_MOCK } from "../mock.ts";
 
 export interface GenerateMandatoryFilesArgs {
   /** The dense analysis artifact produced by the analysis stage. */
@@ -37,6 +38,7 @@ export const generateMandatoryFiles = async ({
   return prompt({
     promptString: buildPrompt(analysis, answers),
     optionalAllowedTools: ["write"],
+    mockOutput: GENERATE_MANDATORY_FILES_MOCK,
   });
 };
 
