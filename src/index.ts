@@ -94,8 +94,6 @@ async function main() {
     `Captured ${questions.answered.length} answer${questions.answered.length === 1 ? "" : "s"}.`,
   );
 
-  // Stage X: Select MCPs
-  await selectMCPs()
 
   // Stages 4 & 5a: non-interactive agent work — generate mandatory files, then
   // compute the additional-steering recommendation. Both run in the spinner.
@@ -199,16 +197,8 @@ async function main() {
     },
   ]);
 
-  await tasks([
-    {
-      title: "Recommending MCP servers",
-      task: async () => "Placeholder for step: recommend MCP servers",
-    },
-    {
-      title: "Adding MCP servers",
-      task: async () => "Placeholder for step: add MCP servers",
-    },
-  ]);
+  // Stage 10: Select MCPs
+  await selectMCPs(analysis + questions.artifact)
 
   // Stage 11: Summarize what the run produced. MCP counts are
   // placeholders until those stages are wired up (currently always 0).
