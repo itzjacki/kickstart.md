@@ -59,14 +59,6 @@ async function main() {
   }
   log.info("Info about the process will go here.");
 
-  // Temporarily put this here, feel free to move it @daria
-  const skills = await selectSkills({
-    projectContext:
-      "Wideroe.no — the public website for Widerøe (Norwegian regional airline). Next.js 16 + Optimizely CMS, replacing a legacy AEM SPA. Serves content pages and transactional flows (booking, manage booking, check-in, loyalty) for travellers, plus a CMS interface for content editors.",
-    userInput: "",
-  });
-  console.log("skills", skills);
-
   // Stage 2: Analyze codebase. Runs in a spinner; capture its artifact for
   // later stages.
   let analysis = "";
