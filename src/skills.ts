@@ -90,39 +90,48 @@ ${JSON.stringify(template, null, 2)}
 export async function confirmSkillSelection(
   selection: SkillSelection,
 ): Promise<Skill[] | null> {
-  // preselect skills the LLM marked `true`
-  const picked = await multiselect<Skill>({
-    message:
-      "Select the skills to install (space to toggle, enter to continue):",
-    options: SKILL_NAMES.map((skill) => ({
-      value: skill,
-      label: skill,
-      hint: SKILLS[skill].hint,
-    })),
-    initialValues: SKILL_NAMES.filter((skill) => selection[skill]),
-    required: false,
-  });
+  let initialValues = SKILL_NAMES.filter((skill) => selection[skill]);
 
-  if (isCancel(picked)) {
-    cancel("Skill selection cancelled.");
-    return null;
+  while (true) {
+    const picked = await multiselect<Skill>({
+      message:
+        "Select the skills to install (space to toggle, enter to continue):",
+      options: SKILL_NAMES.map((skill) => ({
+        value: skill,
+        label: skill,
+        hint: SKILLS[skill].hint,
+      })),
+      initialValues,
+      required: false,
+    });
+
+    if (isCancel(picked)) {
+      cancel("Skill selection cancelled.");
+      return null;
+    }
+
+    const chosen = new Set(picked);
+    // confirm before proceeding
+    const proceed = await confirm({
+      message:
+        chosen.size > 0
+          ? `Install ${chosen.size} skill(s): ${[...chosen].join(", ")}?`
+          : "Proceed with no skills selected?",
+    });
+
+    if (isCancel(proceed)) {
+      cancel("Skill selection cancelled.");
+      return null;
+    }
+
+    // answer "no" -> loop back to the multiselect
+    if (!proceed) {
+      initialValues = [...chosen];
+      continue;
+    }
+
+    return [...chosen];
   }
-
-  const chosen = new Set(picked);
-  // confirm before proceeding
-  const proceed = await confirm({
-    message:
-      chosen.size > 0
-        ? `Install ${chosen.size} skill(s): ${[...chosen].join(", ")}?`
-        : "Proceed with no skills selected?",
-  });
-
-  if (isCancel(proceed) || !proceed) {
-    cancel("Skill selection cancelled.");
-    return null;
-  }
-
-  return [...chosen];
 }
 
 export function getSelectedSkills(selection: SkillSelection): Skill[] {
