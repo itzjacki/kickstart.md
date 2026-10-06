@@ -210,12 +210,12 @@ async function main() {
     },
   ]);
 
-  // Stage 11: Summarize what the run produced. Skills/MCP counts are
+  // Stage 11: Summarize what the run produced. MCP counts are
   // placeholders until those stages are wired up (currently always 0).
   showSummary({
     mandatoryFiles: MANDATORY_FILES,
     additionalFiles: selectedAdditionalFiles,
-    skillsInstalled: 0,
+    skillsInstalled: selectedSkills.length,
     mcpServersAdded: 0,
   });
   outro("Kickstart complete!");
