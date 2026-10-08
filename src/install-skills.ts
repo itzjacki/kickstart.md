@@ -1,23 +1,29 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { SKILLS } from "./skills.ts";
 import type { Skill } from "./skills.ts";
 
 const execFileAsync = promisify(execFile);
 
 /**
- * Resolve the `skills` CLI binary from the local node_modules rather than
- * relying on npx. (This avoids first-run download latency and version drift)
+ * Resolve the `skills` CLI entrypoint through Node's module resolution rather
+ * than guessing a path into `node_modules/.bin`.
+ *
+ * Why: when kickstart.md is installed as a dependency, npm hoists `skills` to
+ * the consumer's top-level `node_modules`, so a hardcoded
+ * `<pkg>/node_modules/.bin/skills` path does not exist. `require.resolve`
+ * finds the real file regardless of where the installer placed it (hoisted,
+ * nested, pnpm symlinks, etc.). We resolve the bin file directly — the `skills`
+ * package ships no `main`/`exports`, but publishes `bin/cli.mjs` in `files`, so
+ * the subpath resolves everywhere.
+ *
+ * We then run it with the current `node` (`process.execPath`) instead of the
+ * `.bin` shim, which avoids depending on shim location, executable bit, or the
+ * shebang being honored (e.g. on Windows).
  */
-const SKILLS_BIN = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "node_modules",
-  ".bin",
-  "skills",
-);
+const require = createRequire(import.meta.url);
+const SKILLS_CLI = require.resolve("skills/bin/cli.mjs");
 
 export interface SkillInstallFailure {
   skill: Skill;
@@ -44,8 +50,17 @@ export async function installSkills(
 
     try {
       await execFileAsync(
-        SKILLS_BIN,
-        ["add", source, "--skill", skill, "--agent", "kiro-cli", "--yes"],
+        process.execPath,
+        [
+          SKILLS_CLI,
+          "add",
+          source,
+          "--skill",
+          skill,
+          "--agent",
+          "kiro-cli",
+          "--yes",
+        ],
         {
           encoding: "utf-8",
           maxBuffer: 10 * 1024 * 1024,
